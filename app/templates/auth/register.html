@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Регистрация{% endblock %}
+{% block content %}
+
+<!-- Фоновая сцена -->
+<div class="scene">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="grid-overlay"></div>
+</div>
+
+<div class="container py-5 position-relative">
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <div class="card glass p-4 shadow-xl">
+        <div class="d-flex align-items-center mb-3">
+          <div class="badge brand-badge me-2">
+            <i class="bi bi-shield-lock"></i>
+          </div>
+          <h2 class="fw-bold mb-0">Регистрация</h2>
+        </div>
+
+        <p class="text-secondary mb-4">Создайте аккаунт и получите доступ к песочницам шифров и лабораторным.</p>
+
+        <form method="post" novalidate class="needs-validation">
+          {{ form.hidden_tag() }}
+
+          <!-- Email -->
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <div class="input-group input-group-lg has-icon">
+              <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+              {{ form.email(class="form-control form-control-lg", placeholder="you@example.com") }}
+            </div>
+            {% for e in form.email.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+          </div>
+
+          <div class="row g-3">
+            <!-- Пароль -->
+            <div class="col-md-6">
+              <label class="form-label">Пароль</label>
+              <div class="input-group input-group-lg has-icon">
+                <span class="input-group-text"><i class="bi bi-key"></i></span>
+                {{ form.password(class="form-control form-control-lg password-field", placeholder="Минимум 6 символов") }}
+                <button class="btn btn-outline-secondary toggle-pass" type="button" tabindex="-1">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+              {% for e in form.password.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+            </div>
+
+            <!-- Повтор пароля -->
+            <div class="col-md-6">
+              <label class="form-label">Подтверждение</label>
+              <div class="input-group input-group-lg has-icon">
+                <span class="input-group-text"><i class="bi bi-shield-check"></i></span>
+                {{ form.password2(class="form-control form-control-lg password-field", placeholder="Повторите пароль") }}
+                <button class="btn btn-outline-secondary toggle-pass" type="button" tabindex="-1">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+              {% for e in form.password2.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+            </div>
+          </div>
+
+          <button class="btn btn-gradient btn-lg w-100 mt-4" type="submit">
+            <i class="bi bi-person-plus me-2"></i> Создать аккаунт
+          </button>
+        </form>
+
+        <div class="mt-4 small text-secondary d-flex align-items-center">
+          <i class="bi bi-box-arrow-in-right me-2"></i>
+          Уже есть аккаунт?
+          <a href="{{ url_for('auth.login') }}" class="ms-1 link-underline link-underline-opacity-0">Войти</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Небольшой JS: показать/скрыть пароль -->
+<script>
+  document.querySelectorAll('.toggle-pass').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = btn.parentElement.querySelector('.password-field');
+      const icon = btn.querySelector('i');
+      if (input.type === 'password') { input.type = 'text'; icon.classList.replace('bi-eye','bi-eye-slash'); }
+      else { input.type = 'password'; icon.classList.replace('bi-eye-slash','bi-eye'); }
+      input.focus();
+    });
+  });
+</script>
+{% endblock %}

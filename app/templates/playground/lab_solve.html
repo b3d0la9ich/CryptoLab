@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Решение: {{ lab.title }}{% endblock %}
+{% block content %}
+
+<div class="d-flex align-items-center gap-3 mb-3">
+  <div class="feature-badge"><i class="bi bi-puzzle"></i></div>
+  <div>
+    <h2 class="mb-0 text-gradient">{{ lab.title }}</h2>
+    <small class="text-soft">Алгоритм: <span class="badge bg-transparent border text-soft">{{ lab.algorithm }}</span></small>
+  </div>
+</div>
+
+<div class="card glass mb-4">
+  <div class="card-body">
+    <h5 class="mb-2">Задание</h5>
+    <pre class="result-box mb-2" id="labDesc">{{ lab.description }}</pre>
+
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-transparent border text-soft"><i class="bi bi-box-arrow-down-right me-1"></i>Payload</span>
+      </div>
+      <button class="btn btn-soft btn-sm" type="button" data-copy="#labPayload">
+        <i class="bi bi-clipboard"></i> Копировать payload
+      </button>
+    </div>
+    <pre class="result-box mt-2" id="labPayload">{{ lab.payload }}</pre>
+  </div>
+</div>
+
+<form method="post" class="mb-4">
+  <label class="form-label">Ваш ответ</label>
+  <input name="answer" class="form-control mono-input" placeholder="введите ответ…" required autofocus>
+  <button class="btn btn-gradient mt-3" type="submit"><i class="bi bi-send"></i> Отправить</button>
+</form>
+
+{% if ok is not none %}
+  <div class="alert {% if ok %}alert-success{% else %}alert-danger{% endif %}">
+    {% if ok %}
+      <i class="bi bi-check-circle-fill me-1"></i> Верно!
+    {% else %}
+      <i class="bi bi-x-circle-fill me-1"></i> Неверно. Попробуйте ещё раз.
+    {% endif %}
+  </div>
+{% endif %}
+
+<a class="btn btn-soft mt-2" href="{{ url_for('main.labs_list') }}"><i class="bi bi-arrow-left"></i> К списку лаб</a>
+
+<script>
+  // Копирование текста из блока <pre>
+  document.querySelectorAll('[data-copy]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const target = document.querySelector(btn.getAttribute('data-copy'));
+      const text = target?.innerText || '';
+      try {
+        await navigator.clipboard.writeText(text);
+        const old = btn.innerHTML;
+        btn.innerHTML = '<i class="bi bi-clipboard-check"></i> Скопировано';
+        setTimeout(()=> btn.innerHTML = old, 1400);
+      } catch(e) {}
+    });
+  });
+</script>
+{% endblock %}

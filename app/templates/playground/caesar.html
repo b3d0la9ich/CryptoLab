@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Цезарь{% endblock %}
+{% block content %}
+
+<h2 class="mb-3 text-gradient">Шифр Цезаря</h2>
+
+<form method="post">
+  {{ form.hidden_tag() }}
+  <div class="mb-3">
+    {{ form.text.label(class="form-label") }}
+    {{ form.text(class="form-control", rows="6") }}
+  </div>
+  <div class="mb-3">
+    {{ form.shift.label(class="form-label") }}
+    {{ form.shift(class="form-control") }}
+  </div>
+  {{ form.submit(class="btn btn-gradient") }}
+</form>
+
+{% if result is not none %}
+  <hr class="my-4">
+  <h3 class="mb-3">Результат</h3>
+  <div class="position-relative">
+    <button class="btn btn-soft btn-sm copy-btn" data-target="#caesarResult">
+      <i class="bi bi-clipboard"></i> Копировать
+    </button>
+    <pre id="caesarResult" class="result-box">{{ result }}</pre>
+  </div>
+  <script>
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const t = document.querySelector(btn.dataset.target).innerText;
+        try {
+          await navigator.clipboard.writeText(t);
+          const old = btn.innerHTML;
+          btn.innerHTML = '<i class="bi bi-clipboard-check"></i> Скопировано';
+          setTimeout(()=>btn.innerHTML = old, 1400);
+        } catch(e) {}
+      });
+    });
+  </script>
+{% endif %}
+
+{% endblock %}

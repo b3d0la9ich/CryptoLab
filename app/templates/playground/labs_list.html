@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Лабы{% endblock %}
+{% block content %}
+<h2>Доступные лабы</h2>
+<ul class="list-group">
+  {% for l in labs %}
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <div>
+      <div class="fw-bold">{{ l.title }}</div>
+      <small class="text-muted">Алгоритм: {{ l.algorithm }}</small>
+    </div>
+    <a class="btn btn-sm btn-primary" href="{{ url_for('main.solve_lab', lab_id=l.id) }}">Решить</a>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

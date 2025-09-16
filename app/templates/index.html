@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}CryptoLab — главная{% endblock %}
+{% block content %}
+
+<!-- Hero -->
+<section class="hero glass card p-4 p-md-5 mb-5">
+  <div class="row align-items-center g-4">
+    <div class="col-lg-7">
+      <h1 class="display-5 fw-bold text-gradient mb-3">CryptoLab</h1>
+      <p class="lead text-soft mb-4">
+        Учебная площадка для изучения криптографических алгоритмов: классические шифры, симметричные и асимметричные методы, лабораторные задания и автопроверка.
+      </p>
+      {% if not current_user.is_authenticated %}
+      <a class="btn btn-gradient btn-lg px-4" href="{{ url_for('auth.register') }}">
+        <i class="bi bi-rocket-takeoff me-2"></i>Начать
+      </a>
+      {% endif %}
+    </div>
+    <div class="col-lg-5">
+      <div class="hero-orb">
+        <i class="bi bi-shield-lock"></i>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Песочницы -->
+<section class="mb-4">
+  <div class="row g-4">
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card feature h-100">
+        <div class="card-body">
+          <div class="feature-badge"><i class="bi bi-arrow-repeat"></i></div>
+          <h5 class="mt-3">Цезарь</h5>
+          <p class="text-soft">Сдвиг по алфавиту и частотный анализ.</p>
+          <a class="btn btn-soft w-100" href="{{ url_for('main.pg_caesar') }}">Открыть</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card feature h-100">
+        <div class="card-body">
+          <div class="feature-badge"><i class="bi bi-key"></i></div>
+          <h5 class="mt-3">Виженер</h5>
+          <p class="text-soft">Ключевое слово · шифр/дешифр.</p>
+          <a class="btn btn-soft w-100" href="{{ url_for('main.pg_vigenere') }}">Открыть</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card feature h-100">
+        <div class="card-body">
+          <div class="feature-badge"><i class="bi bi-cpu"></i></div>
+          <h5 class="mt-3">AES</h5>
+          <p class="text-soft">Режим CBC, IV и паддинг.</p>
+          <a class="btn btn-soft w-100" href="{{ url_for('main.pg_aes') }}">Открыть</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card feature h-100">
+        <div class="card-body">
+          <div class="feature-badge"><i class="bi bi-shield-check"></i></div>
+          <h5 class="mt-3">RSA</h5>
+          <p class="text-soft">Пара ключей и OAEP.</p>
+          <a class="btn btn-soft w-100" href="{{ url_for('main.pg_rsa') }}">Открыть</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

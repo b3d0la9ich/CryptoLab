@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}RSA{% endblock %}
+{% block content %}
+
+<h2 class="mb-3 text-gradient">RSA (OAEP)</h2>
+
+<form method="post">
+  {{ form.hidden_tag() }}
+  <div class="mb-3">
+    {{ form.text.label(class="form-label") }}
+    {{ form.text(class="form-control", rows="6") }}
+  </div>
+  {{ form.submit(class="btn btn-gradient") }}
+</form>
+
+{% if enc %}
+  <hr class="my-4">
+
+  <h5 class="mb-2">Шифртекст (Base64)</h5>
+  <div class="position-relative mb-3">
+    <button class="btn btn-soft btn-sm copy-btn" data-target="#rsaEnc">
+      <i class="bi bi-clipboard"></i> Копировать
+    </button>
+    <pre id="rsaEnc" class="result-box">{{ enc }}</pre>
+  </div>
+
+  <h5 class="mb-2">Дешифрование (проверка)</h5>
+  <div class="position-relative">
+    <button class="btn btn-soft btn-sm copy-btn" data-target="#rsaDec">
+      <i class="bi bi-clipboard"></i> Копировать
+    </button>
+    <pre id="rsaDec" class="result-box">{{ dec }}</pre>
+  </div>
+
+  <script>
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const el = document.querySelector(btn.dataset.target);
+        if (!el) return;
+        try {
+          await navigator.clipboard.writeText(el.innerText);
+          const old = btn.innerHTML;
+          btn.innerHTML = '<i class="bi bi-clipboard-check"></i> Скопировано';
+          setTimeout(()=> btn.innerHTML = old, 1400);
+        } catch(e) {}
+      });
+    });
+  </script>
+{% endif %}
+
+{% endblock %}
+ юююююююююююююююююююююююююююююююююююбб

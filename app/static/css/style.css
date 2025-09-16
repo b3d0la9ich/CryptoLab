@@ -1,0 +1,328 @@
+/* Базовая типографика */
+:root{
+  --bg-1: #0b0f17;
+  --bg-2: #0e1320;
+  --brand-1: #6ee7f3;
+  --brand-2: #8b5cf6;
+  --brand-3: #22d3ee;
+  --glass-bg: rgba(255,255,255,0.08);
+  --glass-brd: rgba(255,255,255,0.18);
+  --ring: rgba(139,92,246,0.45);
+}
+
+html, body { height: 100%; }
+body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+  background: radial-gradient(1200px 800px at 80% -10%, #1a1f2e 0%, #0c1018 40%, #070a10 100%), linear-gradient(180deg, var(--bg-1), var(--bg-2));
+  color: #eaeef7;
+}
+
+/* Фоновая сцена с «блобами» и сеткой */
+.scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+.blob {
+  position: absolute; filter: blur(42px); opacity: 0.45;
+  animation: float 18s ease-in-out infinite;
+  will-change: transform;
+}
+.blob-1 {
+  width: 36rem; height: 36rem; left: -10rem; top: -8rem;
+  background: radial-gradient(circle at 30% 30%, var(--brand-2), transparent 60%),
+              radial-gradient(circle at 70% 70%, var(--brand-3), transparent 60%);
+  animation-duration: 22s;
+}
+.blob-2 {
+  width: 28rem; height: 28rem; right: -8rem; bottom: -6rem;
+  background: radial-gradient(circle at 20% 70%, var(--brand-1), transparent 60%),
+              radial-gradient(circle at 80% 30%, var(--brand-2), transparent 60%);
+}
+.grid-overlay {
+  position: absolute; inset: 0; opacity: .12;
+  background-image:
+    radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
+    linear-gradient(transparent 0%, rgba(255,255,255,.06) 100%);
+  background-size: 22px 22px, 100% 100%;
+  background-position: 0 0, 0 0;
+}
+
+/* Анимация «плавания» */
+@keyframes float {
+  0%,100% { transform: translate3d(0,0,0) scale(1); }
+  50% { transform: translate3d(10px,-10px,0) scale(1.04); }
+}
+
+/* Стеклянная карточка */
+.card.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  border-radius: 20px;
+}
+
+/* Потолще тень */
+.shadow-xl {
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.35),
+    inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+/* Акцентная «пломба» */
+.brand-badge{
+  display:inline-flex; align-items:center; justify-content:center;
+  width: 44px; height: 44px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--brand-2), var(--brand-3));
+  color: #071018; font-size: 22px; box-shadow: 0 10px 30px rgba(139,92,246,.35);
+}
+
+/* Инпуты с иконкой */
+.input-group.has-icon .input-group-text{
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #cfd8f3;
+  border-right: none;
+  backdrop-filter: blur(8px);
+}
+.input-group.has-icon .form-control{
+  border-left: none;
+}
+
+.form-control, .form-select {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: #eaeef7;
+}
+.form-control::placeholder { color: #a7b0c5; }
+.form-control:focus {
+  box-shadow: 0 0 0 .25rem var(--ring);
+  border-color: rgba(139,92,246,.55);
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+}
+
+/* Кнопка-градиент */
+.btn-gradient {
+  --g1: var(--brand-2);
+  --g2: var(--brand-3);
+  background: linear-gradient(135deg, var(--g1), var(--g2));
+  border: none; color: #0b0f17;
+  font-weight: 700; letter-spacing: .2px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(34,211,238,.25);
+  transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
+}
+.btn-gradient:hover { transform: translateY(-1px); filter: brightness(1.03); }
+.btn-gradient:active { transform: translateY(0); filter: brightness(.98); }
+
+/* Кнопка «глаз» у пароля */
+.toggle-pass {
+  border-left: none !important;
+  color: #cfd8f3;
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.12) !important;
+}
+.toggle-pass:hover { color: #fff; }
+
+/* Ссылки */
+a { color: #9ab7ff; }
+a:hover { color: #bcd0ff; }
+
+/* Прочее */
+pre { white-space: pre-wrap; word-wrap: break-word; }
+
+/* Уважение reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .blob { animation: none; }
+  .btn-gradient, .form-control { transition: none; }
+}
+
+/* фон */
+.dark-bg {
+  background: radial-gradient(1200px 800px at 80% -10%, #1a1f2e 0%, #0c1018 40%, #070a10 100%);
+  color: #eaeef7;
+}
+
+/* фоновые blobs */
+.background-scene { position: fixed; inset:0; z-index:-1; overflow:hidden; }
+.blob { position:absolute; border-radius:50%; filter:blur(60px); opacity:.4; }
+.blob.bg1 { width:400px; height:400px; top:-100px; left:-120px; background:#6ee7f3; animation:float 20s infinite; }
+.blob.bg2 { width:350px; height:350px; bottom:-120px; right:-100px; background:#8b5cf6; animation:float 25s infinite; }
+@keyframes float { 0%,100%{transform:translate(0,0);} 50%{transform:translate(40px,-30px);} }
+
+.grid { position:absolute; inset:0; background-image:radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size:30px 30px; opacity:.1; }
+
+/* стеклянный navbar */
+.glass-nav {
+  background: rgba(20,20,30,0.65);
+  backdrop-filter: blur(12px);
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+.navbar-brand.text-gradient {
+  background: linear-gradient(90deg,#22d3ee,#8b5cf6);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+/* контейнер под контент */
+.content-container { padding-top: 100px; padding-bottom:40px; }
+
+/* карточки */
+.card.glass {
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.15);
+  backdrop-filter: blur(18px);
+  border-radius: 16px;
+  color:#fff;
+}
+
+/* кнопки */
+.btn-gradient {
+  background: linear-gradient(90deg,#8b5cf6,#22d3ee);
+  border:none; border-radius:12px; font-weight:600; color:#fff;
+  box-shadow:0 6px 18px rgba(34,211,238,.25);
+  transition: all .2s ease;
+}
+.btn-gradient:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(34,211,238,.35); }
+
+/* заголовки */
+h1,h2,h3,h4 {
+  background: linear-gradient(90deg,#8b5cf6,#22d3ee);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  font-weight:700;
+}
+
+/* Тон для вторичного текста на тёмном фоне */
+.text-soft { color: #c9d2ea; }
+
+/* Герой-блок: стеклянный, с крупной иконкой */
+.hero { border-radius: 18px; }
+.hero-orb{
+  width: 220px; height: 220px; margin: 0 auto;
+  border-radius: 50%;
+  background: radial-gradient(120px 120px at 30% 30%, #8b5cf6 0%, transparent 60%),
+              radial-gradient(120px 120px at 70% 70%, #22d3ee 0%, transparent 60%);
+  filter: blur(0.2px);
+  position: relative; box-shadow: 0 30px 80px rgba(139,92,246,.25);
+}
+.hero-orb i{
+  position:absolute; inset:0; display:grid; place-items:center;
+  font-size: 92px; color: #10151f; mix-blend-mode: screen; opacity: .8;
+}
+
+/* Карточки-фичи */
+.card.feature{
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(14px);
+  border-radius: 16px;
+  transition: transform .18s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.card.feature:hover{
+  transform: translateY(-4px);
+  border-color: rgba(139,92,246,.35);
+  box-shadow: 0 14px 40px rgba(34,211,238,.18);
+}
+
+/* Плашка-иконка на карточке */
+.feature-badge{
+  width: 42px; height: 42px; border-radius: 12px;
+  display: inline-grid; place-items: center;
+  background: linear-gradient(135deg,#8b5cf6,#22d3ee);
+  color: #0b0f17; font-size: 20px;
+  box-shadow: 0 10px 24px rgba(34,211,238,.25);
+}
+
+/* Мягкая кнопка на карточках */
+.btn-soft{
+  background: rgba(255,255,255,.06);
+  color: #eaeef7; border: 1px solid rgba(255,255,255,.15);
+  border-radius: 12px; font-weight:600;
+  transition: all .18s ease;
+}
+.btn-soft:hover{
+  color:#0b0f17; background: linear-gradient(135deg,#8b5cf6,#22d3ee);
+  border-color: transparent; transform: translateY(-1px);
+}
+
+/* Градиент для текста заголовков (если нужен именно в hero) */
+.text-gradient{
+  background: linear-gradient(90deg,#8b5cf6 0%, #22d3ee 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+
+/* Заголовок внутри карточек */
+.card.feature h5 {
+  color: #fff; /* белый текст */
+  font-weight: 600;
+}
+
+/* Описание */
+.card.feature p {
+  color: #cfd8f3; /* мягкий светлый */
+  font-size: 0.9rem;
+}
+
+/* Иконка-бейдж */
+.feature-badge {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: inline-grid;
+  place-items: center;
+  background: linear-gradient(135deg, #22d3ee, #8b5cf6);
+  color: #fff;           /* яркая иконка */
+  font-size: 20px;
+  box-shadow: 0 10px 24px rgba(34,211,238,.25);
+}
+
+/* --- FIX: чтобы текст в поле пароля был виден полностью --- */
+.input-group.has-icon {
+  display: flex;              /* гарантируем flex */
+  align-items: stretch;
+  flex-wrap: nowrap;
+}
+
+.input-group.has-icon .form-control {
+  flex: 1 1 auto;
+  min-width: 0;               /* ключевая строка: разрешает сжатие контента */
+  text-overflow: clip;        /* на всякий, убираем многоточие */
+  overflow: hidden;           /* норм для поля ввода */
+}
+
+.input-group.has-icon .input-group-text,
+.input-group.has-icon .btn.toggle-pass {
+  padding-inline: 0.75rem;    /* компактнее иконка/кнопка-глаз */
+}
+
+.input-group.input-group-lg .form-control,
+.input-group.input-group-lg .input-group-text,
+.input-group.input-group-lg .btn {
+  height: 48px;               /* единая высота, чтобы ничего не наползало */
+  line-height: 48px;
+}
+
+/* placeholder можно чуть сделать меньше и контрастнее */
+.password-field::placeholder {
+  font-size: 0.95rem;
+  color: #b9c4de;
+  opacity: 0.95;
+}
+
+/* моноширинный ввод для ответов */
+.mono-input{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+/* результат/описание в тёмной теме (общий стиль из песочниц) */
+.result-box{
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.15);
+  color:#eaeef7;
+  border-radius: 12px;
+  padding: 1rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow:auto;
+  max-height: 320px;
+}
+

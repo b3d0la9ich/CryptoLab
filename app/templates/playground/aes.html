@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}AES-CBC{% endblock %}
+{% block content %}
+
+<h2 class="mb-3 text-gradient">AES (CBC)</h2>
+
+<form method="post">
+  {{ form.hidden_tag() }}
+  <div class="mb-3">
+    {{ form.text.label(class="form-label") }}
+    {{ form.text(class="form-control", rows="6") }}
+  </div>
+  <div class="mb-3">
+    {{ form.key.label(class="form-label") }}
+    {{ form.key(class="form-control") }}
+    <div class="form-text text-soft">Длина ключа должна быть 16/24/32 байта.</div>
+  </div>
+  {{ form.submit(class="btn btn-gradient") }}
+</form>
+
+{% if enc %}
+  <hr class="my-4">
+
+  <h5 class="mb-2">Base64 (IV+CT)</h5>
+  <div class="position-relative mb-3">
+    <button class="btn btn-soft btn-sm copy-btn" data-target="#aesEnc">
+      <i class="bi bi-clipboard"></i> Копировать
+    </button>
+    <pre id="aesEnc" class="result-box">{{ enc }}</pre>
+  </div>
+
+  <h5 class="mb-2">Дешифрование (проверка)</h5>
+  <div class="position-relative">
+    <button class="btn btn-soft btn-sm copy-btn" data-target="#aesDec">
+      <i class="bi bi-clipboard"></i> Копировать
+    </button>
+    <pre id="aesDec" class="result-box">{{ dec }}</pre>
+  </div>
+
+  <script>
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const el = document.querySelector(btn.dataset.target);
+        if (!el) return;
+        try {
+          await navigator.clipboard.writeText(el.innerText);
+          const old = btn.innerHTML;
+          btn.innerHTML = '<i class="bi bi-clipboard-check"></i> Скопировано';
+          setTimeout(()=> btn.innerHTML = old, 1400);
+        } catch(e) {}
+      });
+    });
+  </script>
+{% endif %}
+
+{% endblock %}

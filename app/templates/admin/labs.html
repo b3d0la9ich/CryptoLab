@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Админ — Лабы{% endblock %}
+{% block content %}
+<h2>Лабораторные задания</h2>
+<form method="post">{{ form.hidden_tag() }}
+  <div class="row g-3">
+    <div class="col-md-6">{{ form.title.label }} {{ form.title(class='form-control') }}</div>
+    <div class="col-md-6">{{ form.algorithm.label }} {{ form.algorithm(class='form-control') }}</div>
+    <div class="col-12">{{ form.description.label }} {{ form.description(class='form-control', rows=3) }}</div>
+    <div class="col-12">{{ form.payload.label }} {{ form.payload(class='form-control', rows=3) }}</div>
+    <div class="col-12">{{ form.answer_hash.label }} {{ form.answer_hash(class='form-control') }}</div>
+  </div>
+  <div class="mt-3">{{ form.submit(class='btn btn-primary') }}</div>
+</form>
+<hr>
+<table class="table table-striped">
+  <thead><tr><th>#</th><th>Название</th><th>Алгоритм</th><th>Создано</th></tr></thead>
+  <tbody>
+    {% for l in labs %}
+    <tr>
+      <td>{{ l.id }}</td>
+      <td>{{ l.title }}</td>
+      <td>{{ l.algorithm }}</td>
+      <td>{{ l.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

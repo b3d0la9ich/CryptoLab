@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Виженер{% endblock %}
+{% block content %}
+
+<h2 class="mb-3 text-gradient">Шифр Виженера</h2>
+
+<form method="post">
+  {{ form.hidden_tag() }}
+  <div class="mb-3">
+    {{ form.text.label(class="form-label") }}
+    {{ form.text(class="form-control", rows="6") }}
+  </div>
+  <div class="mb-3">
+    {{ form.key.label(class="form-label") }}
+    {{ form.key(class="form-control") }}
+  </div>
+  {{ form.submit(class="btn btn-gradient") }}
+</form>
+
+{% if enc %}
+  <hr class="my-4">
+  <h5 class="mb-2">Шифртекст</h5>
+  <div class="position-relative mb-3">
+    <button class="btn btn-soft btn-sm copy-btn" data-target="#vigEnc">
+      <i class="bi bi-clipboard"></i> Копировать
+    </button>
+    <pre id="vigEnc" class="result-box">{{ enc }}</pre>
+  </div>
+
+  <h5 class="mb-2">Расшифровка (проверка)</h5>
+  <div class="position-relative">
+    <button class="btn btn-soft btn-sm copy-btn" data-target="#vigDec">
+      <i class="bi bi-clipboard"></i> Копировать
+    </button>
+    <pre id="vigDec" class="result-box">{{ dec }}</pre>
+  </div>
+
+  <script>
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const target = document.querySelector(btn.dataset.target);
+        if (!target) return;
+        try {
+          await navigator.clipboard.writeText(target.innerText);
+          const old = btn.innerHTML;
+          btn.innerHTML = '<i class="bi bi-clipboard-check"></i> Скопировано';
+          setTimeout(()=> btn.innerHTML = old, 1400);
+        } catch(e) {}
+      });
+    });
+  </script>
+{% endif %}
+
+{% endblock %}
