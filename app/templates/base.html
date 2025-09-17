@@ -18,24 +18,86 @@
 </div>
 
 <!-- Навбар -->
-<nav class="navbar navbar-expand-lg glass-nav fixed-top">
-  <div class="container">
-    <a class="navbar-brand fw-bold text-gradient" href="{{ url_for('main.index') }}">
+<nav class="navbar navbar-expand-lg navbar-dark glass-nav fixed-top">
+  <div class="container position-relative">
+
+    <!-- Логотип по центру -->
+    <a class="navbar-brand fw-bold text-gradient position-absolute top-50 start-50 translate-middle"
+       href="{{ url_for('main.index') }}">
       <i class="bi bi-shield-shaded me-1"></i> CryptoLab
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+
+    <!-- Кнопка-бургер (справа для мобилы) -->
+    <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
+
+    <!-- Правое меню -->
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav align-items-lg-center">
+
         {% if current_user.is_authenticated %}
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right me-1"></i>Выйти</a></li>
+          <!-- Быстрая ссылка на лабы -->
+          <li class="nav-item d-none d-lg-block">
+            <a class="nav-link text-white" href="{{ url_for('main.labs_list') }}">
+              <i class="bi bi-list-check me-1"></i>Лабы
+            </a>
+          </li>
+
+          <!-- Профиль / Админка / Выход -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#"
+               id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle me-2"></i>
+              <span class="d-none d-sm-inline">{{ current_user.email }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+              <li>
+                <a class="dropdown-item" href="{{ url_for('main.profile') }}">
+                  <i class="bi bi-person me-2"></i>Профиль
+                </a>
+              </li>
+
+              {% if current_user.is_admin %}
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('admin.dashboard') }}">
+                    <i class="bi bi-speedometer2 me-2"></i>Админка
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('admin.labs_list') }}">
+                    <i class="bi bi-diagram-3 me-2"></i>Лабы (CRUD)
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('admin.users_list') }}">
+                    <i class="bi bi-people me-2"></i>Пользователи
+                  </a>
+                </li>
+              {% endif %}
+
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                  <i class="bi bi-box-arrow-right me-2"></i>Выйти
+                </a>
+              </li>
+            </ul>
+          </li>
+
         {% else %}
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Вход</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}">Регистрация</a></li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{{ url_for('auth.login') }}">Вход</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="{{ url_for('auth.register') }}">Регистрация</a>
+          </li>
         {% endif %}
+
       </ul>
     </div>
+
   </div>
 </nav>
 

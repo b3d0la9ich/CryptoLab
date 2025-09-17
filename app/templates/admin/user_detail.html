@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Пользователь — {{ user.email }}{% endblock %}
+{% block content %}
+<h2 class="mb-3"><i class="bi bi-person me-2"></i>{{ user.email }}</h2>
+
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card glass p-3">
+      <div class="small text-soft">Имя</div>
+      <div class="fw-semibold">{{ user.name }}</div>
+      <hr>
+      <div class="small text-soft">Роль</div>
+      <div>{% if user.is_admin %}<span class="badge text-bg-warning">admin</span>{% else %}<span class="badge text-bg-secondary">user</span>{% endif %}</div>
+      <hr>
+      <div class="small text-soft">Зарегистрирован</div>
+      <div class="small">{{ user.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+    </div>
+  </div>
+
+  <div class="col-md-8">
+    <div class="card glass p-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <h5 class="mb-0">Отправленные решения</h5>
+      </div>
+      {% if subs %}
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr class="text-soft">
+                <th>ID</th>
+                <th>Лаба</th>
+                <th>Ответ (фрагмент)</th>
+                <th>Статус</th>
+                <th>Дата</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for s in subs %}
+              <tr>
+                <td class="small text-secondary">{{ s.id }}</td>
+                <td class="small">{{ s.lab.title if s.lab else ('lab#'+s.lab_id|string) }}</td>
+                <td class="small text-truncate" style="max-width: 320px">{{ s.submitted_text }}</td>
+                <td>
+                  {% if s.is_correct %}
+                    <span class="badge text-bg-success">верно</span>
+                  {% else %}
+                    <span class="badge text-bg-danger">неверно</span>
+                  {% endif %}
+                </td>
+                <td class="small text-secondary">{{ s.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="text-secondary">Ещё нет отправок.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

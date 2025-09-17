@@ -326,3 +326,144 @@ h1,h2,h3,h4 {
   max-height: 320px;
 }
 
+/* ——— Модалки «Как работает?» ——— */
+.modal-backdrop.show{
+  background: rgba(7,10,16,0.65);        /* темнее фон под модалкой */
+  backdrop-filter: blur(2px);
+}
+
+.modal-glass{
+  background: rgba(20, 24, 34, 0.92);    /* тёмное стекло */
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 16px;
+  color: #eaeef7;
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  box-shadow: 0 20px 70px rgba(0,0,0,.45);
+}
+
+.modal-glass .modal-header,
+.modal-glass .modal-footer{
+  border-color: rgba(255,255,255,0.12);
+}
+
+.modal-glass .modal-title{
+  color: #fff;
+  font-weight: 700;
+}
+
+.modal-glass .btn-close{
+  filter: invert(1) grayscale(1);
+  opacity: .8;
+}
+.modal-glass .btn-close:hover{ opacity: 1; }
+
+/* Текст в модалке — читабельный */
+.modal-glass .modal-body p,
+.modal-glass .modal-body li,
+.modal-glass .modal-body small{
+  color: #cfd8f3;
+}
+
+/* Код/примеры внутри модалки */
+.modal-glass .result-box{
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.15);
+  color: #eaeef7;
+}
+
+/* Маленький шрифт в примерах (если есть .small) */
+.modal-glass .result-box.small{
+  font-size: .9rem;
+}
+
+/* Кнопки в футере модалки */
+.modal-glass .btn.btn-gradient{
+  box-shadow: 0 10px 24px rgba(34,211,238,.28);
+}
+
+.icon-circle {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  box-shadow: 0 10px 24px rgba(0,0,0,.18);
+}
+.bg-gradient {
+  background: linear-gradient(135deg, rgba(99,102,241,.9), rgba(34,211,238,.9));
+}
+.text-soft { color: rgba(236, 239, 248, .8); }
+
+/* Исправление тусклого текста в карточках */
+.card .text-muted,
+.text-soft {
+  color: rgba(220, 220, 220, 0.75) !important; /* светло-серый */
+}
+
+/* Для случаев вообще пустого состояния */
+.empty-state {
+  color: rgba(220, 220, 220, 0.6);
+  font-style: italic;
+}
+
+.card-users {
+  color: #e0e0e0; /* светло-серый для видимости */
+}
+
+.card-users .user-email {
+  color: #ffffff; /* белый текст email */
+  font-weight: 500;
+}
+
+.card-users .user-score {
+  color: #00e676; /* зелёный для счётчиков */
+  font-weight: 600;
+}
+
+/* ===== Admin dashboard contrast fixes ===== */
+
+/* Общие «мягкие» тексты внутри стеклянных карточек */
+.glass .text-soft,
+.glass .text-muted {
+  color: #b9c4d3 !important;
+}
+
+/* Таблица «Последние отправки» — читаемость */
+.glass .table {
+  color: #e6ebf2;
+}
+.glass .table thead th {
+  color: #c5cfe0;
+  border-bottom-color: rgba(255,255,255,.08);
+}
+.glass .table tbody td {
+  border-top-color: rgba(255,255,255,.06);
+}
+
+/* Карточка «Топ-5 пользователей» */
+.card-users { color: #e6ebf2; }
+.card-users .list-group-item {
+  background: transparent;
+  border-color: rgba(255,255,255,.06);
+  padding-left: .75rem;
+  padding-right: .75rem;
+}
+.card-users .user-row i { color: #9fb0c7; }
+.card-users .user-email { color: #ffffff; font-weight: 500; }
+
+/* Бейдж со счётом ok/total — контрастный, но аккуратный */
+.score-badge {
+  display: inline-block;
+  padding: .25rem .5rem;
+  border-radius: .5rem;
+  font-weight: 600;
+  line-height: 1;
+  background: rgba(0, 229, 153, .12);
+  color: #34f5b4;
+  border: 1px solid rgba(52, 245, 180, .25);
+}
+
+/* Подстраховка для очень тёмного фона внутри карточек */
+.card-users .list-group-item .user-email,
+.card-users h5 {
+  text-shadow: 0 0 1px rgba(0,0,0,.4);
+}

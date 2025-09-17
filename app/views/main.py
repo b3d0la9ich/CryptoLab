@@ -8,6 +8,12 @@ from ..crypto.vigenere import vigenere
 from ..crypto.aes import encrypt_cbc, decrypt_cbc
 from ..crypto.rsa import encrypt_decrypt
 from ..models import Lab, Submission
+from ..forms import CaesarForm, VigenereForm, AESForm, RSAForm, RC4Form, PlayfairForm, RailFenceForm, SHA256Form
+from ..crypto.rc4 import rc4_encrypt, rc4_decrypt
+from ..crypto.playfair import playfair_encrypt, playfair_decrypt
+from ..crypto.railfence import railfence_encrypt, railfence_decrypt
+from ..crypto.sha256util import sha256_hex
+import base64
 from .. import db
 
 bp = Blueprint('main', __name__)
@@ -15,6 +21,15 @@ bp = Blueprint('main', __name__)
 @bp.route('/')
 def index():
     return render_template('index.html')
+
+@bp.route('/profile')
+@login_required
+def profile():
+    subs = (Submission.query
+            .filter_by(user_id=current_user.id)
+            .order_by(Submission.id.desc())
+            .all())
+    return render_template('profile.html', subs=subs)
 
 # Песочницы
 @bp.route('/playground/caesar', methods=['GET', 'POST'])
@@ -55,6 +70,46 @@ def pg_rsa():
     if form.validate_on_submit():
         enc, dec = encrypt_decrypt(form.text.data)
     return render_template('playground/rsa.html', form=form, enc=enc, dec=dec)
+
+@bp.route('/playground/rc4', methods=['GET', 'POST'])
+@login_required
+def pg_rc4():
+    form = RC4Form()
+    enc_b64 = dec = None
+    if form.validate_on_submit():
+        ct = rc4_encrypt(form.text.data, form.key.data)
+        enc_b64 = base64.b64encode(ct).decode('ascii')
+        dec = rc4_decrypt(ct, form.key.data)
+    return render_template('playground/rc4.html', form=form, enc=enc_b64, dec=dec)
+
+@bp.route('/playground/playfair', methods=['GET', 'POST'])
+@login_required
+def pg_playfair():
+    form = PlayfairForm()
+    enc = dec = None
+    if form.validate_on_submit():
+        enc = playfair_encrypt(form.text.data, form.key.data)
+        dec = playfair_decrypt(enc, form.key.data)
+    return render_template('playground/playfair.html', form=form, enc=enc, dec=dec)
+
+@bp.route('/playground/railfence', methods=['GET', 'POST'])
+@login_required
+def pg_railfence():
+    form = RailFenceForm()
+    enc = dec = None
+    if form.validate_on_submit():
+        enc = railfence_encrypt(form.text.data, form.rails.data)
+        dec = railfence_decrypt(enc, form.rails.data)
+    return render_template('playground/railfence.html', form=form, enc=enc, dec=dec)
+
+@bp.route('/playground/sha256', methods=['GET', 'POST'])
+@login_required
+def pg_sha256():
+    form = SHA256Form()
+    digest = None
+    if form.validate_on_submit():
+        digest = sha256_hex(form.text.data)
+    return render_template('playground/sha256.html', form=form, digest=digest)
 
 # Лабы для студентов
 @bp.route('/labs')

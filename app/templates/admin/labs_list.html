@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Админка — Лабы{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h2 class="mb-0">Лабораторные</h2>
+  <a class="btn btn-gradient" href="{{ url_for('admin.labs_new') }}">
+    <i class="bi bi-plus-lg me-1"></i> Новая лаба
+  </a>
+</div>
+
+{% if labs %}
+  <div class="row g-3">
+    {% for lab in labs %}
+      <div class="col-md-6 col-xl-4">
+        <div class="card glass h-100">
+          <div class="card-body">
+            <div class="small text-soft">{{ lab.algorithm|upper }}</div>
+            <h5 class="mt-1">{{ lab.title }}</h5>
+            <p class="text-secondary small mb-3">
+              {{ lab.description[:140] }}{% if lab.description|length>140 %}…{% endif %}
+            </p>
+            <div class="d-flex gap-2">
+              <a class="btn btn-soft" href="{{ url_for('admin.labs_edit', lab_id=lab.id) }}">
+                <i class="bi bi-pencil me-1"></i>Редактировать
+              </a>
+              <form method="post" action="{{ url_for('admin.labs_delete', lab_id=lab.id) }}"
+                    onsubmit="return confirm('Удалить лабу «{{ lab.title }}»?')">
+                <button class="btn btn-outline-danger">
+                  <i class="bi bi-trash me-1"></i>Удалить
+                </button>
+              </form>
+            </div>
+          </div>
+          <div class="card-footer small text-soft">
+            Создано: {{ lab.created_at.strftime('%Y-%m-%d %H:%M') }}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card glass p-4">
+    <div class="text-secondary">Лаб нет. Нажми «Новая лаба», чтобы создать первую.</div>
+  </div>
+{% endif %}
+{% endblock %}

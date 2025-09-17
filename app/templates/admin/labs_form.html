@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Редактировать' if lab else 'Новая лаба' }}{% endblock %}
+{% block content %}
+<h2 class="mb-3">{{ 'Редактировать лабу' if lab else 'Новая лаба' }}</h2>
+
+<form method="post" class="card glass p-4">
+  {{ form.hidden_tag() }}
+
+  <div class="mb-3">
+    {{ form.title.label(class="form-label") }}
+    {{ form.title(class="form-control", placeholder="Напр.: Виженер — расшифруй фразу") }}
+    {% for e in form.title.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+  </div>
+
+  <div class="mb-3">
+    {{ form.description.label(class="form-label") }}
+    {{ form.description(class="form-control", rows=4, placeholder="Условие, вводные, подсказки...") }}
+    {% for e in form.description.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      {{ form.algorithm.label(class="form-label") }}
+      {{ form.algorithm(class="form-control", placeholder="caesar | vigenere | aes | rsa") }}
+      {% for e in form.algorithm.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+    </div>
+    <div class="col-md-6">
+      {{ form.answer_hash.label(class="form-label") }}
+      {{ form.answer_hash(class="form-control", placeholder="Ожидаемый ответ в виде SHA-256 (64 hex)") }}
+      {% for e in form.answer_hash.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+    </div>
+  </div>
+
+  <div class="mb-3 mt-3">
+    {{ form.payload.label(class="form-label") }}
+    {{ form.payload(class="form-control", rows=3, placeholder="Входные данные для задания (payload)") }}
+    {% for e in form.payload.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+  </div>
+
+  <div class="d-flex gap-2">
+    {{ form.submit(class="btn btn-gradient") }}
+    <a class="btn btn-soft" href="{{ url_for('admin.labs_list') }}">Отмена</a>
+  </div>
+</form>
+{% endblock %}

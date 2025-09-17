@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Мой профиль{% endblock %}
+{% block content %}
+
+<div class="row g-4">
+  <div class="col-12 col-lg-4">
+    <div class="card glass p-4 h-100">
+      <div class="d-flex align-items-center gap-3">
+        <div class="avatar bg-gradient d-flex align-items-center justify-content-center"
+             style="width:64px;height:64px;border-radius:50%;">
+          <i class="bi bi-person text-white fs-3"></i>
+        </div>
+        <div>
+          <div class="fw-bold">{{ current_user.email }}</div>
+          {% if current_user.is_admin %}
+            <span class="badge bg-danger">Администратор</span>
+          {% else %}
+            <span class="badge bg-primary">Студент</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <hr>
+      <div class="small text-soft">
+        <div class="d-flex justify-content-between">
+          <span>Последний вход</span>
+          <span>—</span> <!-- вывести, если храните -->
+        </div>
+        <div class="d-flex justify-content-between">
+          <span>Всего отправок</span>
+          <span>{{ subs|length }}</span>
+        </div>
+      </div>
+
+      <hr>
+      <a class="btn btn-soft w-100 mb-2" href="{{ url_for('main.labs_list') }}">
+        <i class="bi bi-list-check me-2"></i>К списку лабораторных
+      </a>
+      <a class="btn btn-outline-danger w-100" href="{{ url_for('auth.logout') }}">
+        <i class="bi bi-box-arrow-right me-2"></i>Выйти
+      </a>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-8">
+    <div class="card glass p-4">
+      <h4 class="mb-3"><i class="bi bi-clock-history me-2"></i>История решений</h4>
+      {% if subs %}
+        <div class="table-responsive">
+          <table class="table table-sm align-middle">
+            <thead>
+              <tr>
+                <th>Дата</th>
+                <th>Лаба</th>
+                <th>Ответ</th>
+                <th class="text-center">Статус</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for s in subs %}
+                <tr>
+                  <td class="text-nowrap">{{ (s.created_at or s.id) }}</td>
+                  <td>{{ s.lab.title if s.lab else '—' }}</td>
+                  <td><code class="small">{{ s.submitted_text }}</code></td>
+                  <td class="text-center">
+                    {% if s.is_correct %}
+                      <span class="badge bg-success">Верно</span>
+                    {% else %}
+                      <span class="badge bg-danger">Неверно</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="text-muted">Пока нет отправленных решений. Перейдите к лабораторным и попробуйте!</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

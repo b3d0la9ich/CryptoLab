@@ -2,7 +2,6 @@
 {% block title %}Регистрация{% endblock %}
 {% block content %}
 
-<!-- Фоновая сцена -->
 <div class="scene">
   <div class="blob blob-1"></div>
   <div class="blob blob-2"></div>
@@ -20,7 +19,9 @@
           <h2 class="fw-bold mb-0">Регистрация</h2>
         </div>
 
-        <p class="text-secondary mb-4">Создайте аккаунт и получите доступ к песочницам шифров и лабораторным.</p>
+        <p class="text-secondary mb-4">
+          Создайте аккаунт и получите доступ к песочницам шифров и лабораторным.
+        </p>
 
         <form method="post" novalidate class="needs-validation">
           {{ form.hidden_tag() }}
@@ -30,9 +31,18 @@
             <label class="form-label">Email</label>
             <div class="input-group input-group-lg has-icon">
               <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-              {{ form.email(class="form-control form-control-lg", placeholder="you@example.com") }}
+              {{ form.email(
+                   class="form-control form-control-lg",
+                   placeholder="you@example.com",
+                   type="text",
+                   inputmode="email",
+                   autocomplete="username",
+                   spellcheck="false"
+              ) }}
             </div>
-            {% for e in form.email.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+            {% for e in form.email.errors %}
+              <div class="text-danger small mt-1">{{ e }}</div>
+            {% endfor %}
           </div>
 
           <div class="row g-3">
@@ -41,25 +51,37 @@
               <label class="form-label">Пароль</label>
               <div class="input-group input-group-lg has-icon">
                 <span class="input-group-text"><i class="bi bi-key"></i></span>
-                {{ form.password(class="form-control form-control-lg password-field", placeholder="Минимум 6 символов") }}
+                {{ form.password(
+                     class="form-control form-control-lg password-field",
+                     placeholder="Минимум 6 символов",
+                     autocomplete="new-password"
+                ) }}
                 <button class="btn btn-outline-secondary toggle-pass" type="button" tabindex="-1">
                   <i class="bi bi-eye"></i>
                 </button>
               </div>
-              {% for e in form.password.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+              {% for e in form.password.errors %}
+                <div class="text-danger small mt-1">{{ e }}</div>
+              {% endfor %}
             </div>
 
-            <!-- Повтор пароля -->
+            <!-- Подтверждение -->
             <div class="col-md-6">
               <label class="form-label">Подтверждение</label>
               <div class="input-group input-group-lg has-icon">
                 <span class="input-group-text"><i class="bi bi-shield-check"></i></span>
-                {{ form.password2(class="form-control form-control-lg password-field", placeholder="Повторите пароль") }}
+                {{ form.password2(
+                     class="form-control form-control-lg password-field",
+                     placeholder="Повторите пароль",
+                     autocomplete="new-password"
+                ) }}
                 <button class="btn btn-outline-secondary toggle-pass" type="button" tabindex="-1">
                   <i class="bi bi-eye"></i>
                 </button>
               </div>
-              {% for e in form.password2.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+              {% for e in form.password2.errors %}
+                <div class="text-danger small mt-1">{{ e }}</div>
+              {% endfor %}
             </div>
           </div>
 
@@ -78,7 +100,6 @@
   </div>
 </div>
 
-<!-- Небольшой JS: показать/скрыть пароль -->
 <script>
   document.querySelectorAll('.toggle-pass').forEach(btn => {
     btn.addEventListener('click', () => {

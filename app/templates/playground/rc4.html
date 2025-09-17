@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}RC4{% endblock %}
+{% block content %}
+<h2 class="mb-3 text-gradient">RC4</h2>
+<form method="post">
+  {{ form.hidden_tag() }}
+  <div class="mb-3">{{ form.text.label(class="form-label") }} {{ form.text(class="form-control", rows="6") }}</div>
+  <div class="mb-3">{{ form.key.label(class="form-label") }} {{ form.key(class="form-control") }}</div>
+  {{ form.submit(class="btn btn-gradient") }}
+</form>
+
+{% if enc %}
+  <hr class="my-4">
+  <h5>Шифртекст (Base64)</h5>
+  <div class="position-relative mb-3">
+    <button class="btn btn-soft btn-sm copy-btn" data-target="#rc4Enc"><i class="bi bi-clipboard"></i> Копировать</button>
+    <pre id="rc4Enc" class="result-box">{{ enc }}</pre>
+  </div>
+  <h5>Дешифрование (проверка)</h5>
+  <pre class="result-box">{{ dec }}</pre>
+  <script>
+    document.querySelectorAll('.copy-btn').forEach(b=>b.onclick=async()=>{
+      const t=document.querySelector(b.dataset.target).innerText;
+      try{await navigator.clipboard.writeText(t);const o=b.innerHTML;b.innerHTML='Скопировано';setTimeout(()=>b.innerHTML=o,1200);}catch(e){}
+    });
+  </script>
+{% endif %}
+{% endblock %}

@@ -2,7 +2,7 @@
 {% block title %}CryptoLab — главная{% endblock %}
 {% block content %}
 
-<!-- Hero -->
+<!-- HERO -->
 <section class="hero glass card p-4 p-md-5 mb-5">
   <div class="row align-items-center g-4">
     <div class="col-lg-7">
@@ -17,9 +17,7 @@
       {% endif %}
     </div>
     <div class="col-lg-5">
-      <div class="hero-orb">
-        <i class="bi bi-shield-lock"></i>
-      </div>
+      <div class="hero-orb"><i class="bi bi-shield-lock"></i></div>
     </div>
   </div>
 </section>
@@ -27,47 +25,456 @@
 <!-- Песочницы -->
 <section class="mb-4">
   <div class="row g-4">
+
+    <!-- Цезарь -->
     <div class="col-12 col-md-6 col-xl-3">
       <div class="card feature h-100">
         <div class="card-body">
           <div class="feature-badge"><i class="bi bi-arrow-repeat"></i></div>
           <h5 class="mt-3">Цезарь</h5>
           <p class="text-soft">Сдвиг по алфавиту и частотный анализ.</p>
-          <a class="btn btn-soft w-100" href="{{ url_for('main.pg_caesar') }}">Открыть</a>
+          <div class="d-flex gap-2">
+            <a class="btn btn-soft w-100" href="{{ url_for('main.pg_caesar') }}">Открыть</a>
+            <button class="btn btn-soft w-auto" type="button" data-bs-toggle="modal" data-bs-target="#infoCaesar">
+              Как работает?
+            </button>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- Виженер -->
     <div class="col-12 col-md-6 col-xl-3">
       <div class="card feature h-100">
         <div class="card-body">
           <div class="feature-badge"><i class="bi bi-key"></i></div>
           <h5 class="mt-3">Виженер</h5>
           <p class="text-soft">Ключевое слово · шифр/дешифр.</p>
-          <a class="btn btn-soft w-100" href="{{ url_for('main.pg_vigenere') }}">Открыть</a>
+          <div class="d-flex gap-2">
+            <a class="btn btn-soft w-100" href="{{ url_for('main.pg_vigenere') }}">Открыть</a>
+            <button class="btn btn-soft w-auto" type="button" data-bs-toggle="modal" data-bs-target="#infoVigenere">
+              Как работает?
+            </button>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- AES -->
     <div class="col-12 col-md-6 col-xl-3">
       <div class="card feature h-100">
         <div class="card-body">
           <div class="feature-badge"><i class="bi bi-cpu"></i></div>
           <h5 class="mt-3">AES</h5>
           <p class="text-soft">Режим CBC, IV и паддинг.</p>
-          <a class="btn btn-soft w-100" href="{{ url_for('main.pg_aes') }}">Открыть</a>
+          <div class="d-flex gap-2">
+            <a class="btn btn-soft w-100" href="{{ url_for('main.pg_aes') }}">Открыть</a>
+            <button class="btn btn-soft w-auto" type="button" data-bs-toggle="modal" data-bs-target="#infoAES">
+              Как работает?
+            </button>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- RSA -->
     <div class="col-12 col-md-6 col-xl-3">
       <div class="card feature h-100">
         <div class="card-body">
           <div class="feature-badge"><i class="bi bi-shield-check"></i></div>
           <h5 class="mt-3">RSA</h5>
           <p class="text-soft">Пара ключей и OAEP.</p>
-          <a class="btn btn-soft w-100" href="{{ url_for('main.pg_rsa') }}">Открыть</a>
+          <div class="d-flex gap-2">
+            <a class="btn btn-soft w-100" href="{{ url_for('main.pg_rsa') }}">Открыть</a>
+            <button class="btn btn-soft w-auto" type="button" data-bs-toggle="modal" data-bs-target="#infoRSA">
+              Как работает?
+            </button>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- RC4 -->
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card feature h-100">
+        <div class="card-body">
+          <div class="feature-badge"><i class="bi bi-lightning-charge"></i></div>
+          <h5 class="mt-3">RC4</h5>
+          <p class="text-soft">Потоковый шифр: XOR с псевдослучайным потоком.</p>
+          <div class="d-flex gap-2">
+            <a class="btn btn-soft w-100" href="{{ url_for('main.pg_rc4') }}">Открыть</a>
+            <button class="btn btn-soft w-auto" type="button" data-bs-toggle="modal" data-bs-target="#infoRC4">
+              Как работает?
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Playfair -->
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card feature h-100">
+        <div class="card-body">
+          <div class="feature-badge"><i class="bi bi-grid-3x3-gap"></i></div>
+          <h5 class="mt-3">Playfair</h5>
+          <p class="text-soft">Диграммы и таблица 5×5 (I/J вместе).</p>
+          <div class="d-flex gap-2">
+            <a class="btn btn-soft w-100" href="{{ url_for('main.pg_playfair') }}">Открыть</a>
+            <button class="btn btn-soft w-auto" type="button" data-bs-toggle="modal" data-bs-target="#infoPlayfair">
+              Как работает?
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHA-256 -->
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card feature h-100">
+        <div class="card-body">
+          <div class="feature-badge"><i class="bi bi-hash"></i></div>
+          <h5 class="mt-3">SHA-256</h5>
+          <p class="text-soft">Криптографическая хэш-функция (256 бит).</p>
+          <div class="d-flex gap-2">
+            <a class="btn btn-soft w-100" href="{{ url_for('main.pg_sha256') }}">Открыть</a>
+            <button class="btn btn-soft w-auto" type="button" data-bs-toggle="modal" data-bs-target="#infoSHA256">
+              Как работает?
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rail Fence -->
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card feature h-100">
+        <div class="card-body">
+          <div class="feature-badge"><i class="bi bi-diagram-3"></i></div>
+          <h5 class="mt-3">Rail Fence</h5>
+          <p class="text-soft">«Зигзаг» по рельсам, построчная сборка.</p>
+          <div class="d-flex gap-2">
+            <a class="btn btn-soft w-100" href="{{ url_for('main.pg_railfence') }}">Открыть</a>
+            <button class="btn btn-soft w-auto" type="button" data-bs-toggle="modal" data-bs-target="#infoRailFence">
+              Как работает?
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
+
+<!-- ===== МОДАЛКИ С ОБЪЯСНЕНИЯМИ ===== -->
+<!-- Caesar -->
+<div class="modal fade" id="infoCaesar" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content modal-glass">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-arrow-repeat me-2"></i>Как работает шифр Цезаря</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <ol class="mb-3">
+          <li><b>Идея:</b> каждую букву заменяем на букву через <code>k</code> позиций по алфавиту (циклически).</li>
+          <li><b>Математически:</b> пронумеруем буквы <code>a=0…z=25</code>. Шифрование: <code>Cᵢ=(Pᵢ+k) mod 26</code>, расшифрование: <code>Pᵢ=(Cᵢ−k) mod 26</code>.</li>
+          <li><b>Практика:</b> регистр можно сохранять, небуквенные символы — оставлять как есть.</li>
+        </ol>
+
+        <div class="fw-semibold mb-2">Пошаговый пример (k=5, «Hello, World!»)</div>
+        <pre class="result-box small">H e l l o  ,   W o r l d  !
+7 4 11 11 14     22 14 17 11 3
++5: 12 9 16 16 19    1  19 22 16 8
+→ M j q q t  ,   B t w q i  !
+</pre>
+
+        <div class="fw-semibold mt-3 mb-2">Где ошибаются</div>
+        <ul class="text-soft">
+          <li>Сдвиг считают без модуля 26 (получаются «выходы за алфавит»).</li>
+          <li>Забывают про отрицательные сдвиги (например, <code>k=-3</code>).</li>
+          <li>Смешивают регистр (можно обработать в нижнем, а затем восстановить заглавные).</li>
+        </ul>
+
+        <div class="fw-semibold mt-3 mb-2">Почему слаб</div>
+        <ul class="text-soft">
+          <li>Всего 26 ключей → перебор за миллисекунды.</li>
+          <li>Частотный анализ моментально выдаёт сдвиг.</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-gradient" href="{{ url_for('main.pg_caesar') }}"><i class="bi bi-box-arrow-up-right me-1"></i>Открыть песочницу</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Vigenere -->
+<div class="modal fade" id="infoVigenere" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content modal-glass">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-key me-2"></i>Как работает шифр Виженера</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <ol class="mb-3">
+          <li><b>Идея:</b> к каждому символу текста прибавляется сдвиг, зависящий от соответствующей буквы ключевого слова.</li>
+          <li><b>Подготовка:</b> переводим в диапазон <code>a=0…z=25</code>, ключ циклически повторяем до длины текста.</li>
+          <li><b>Формулы:</b> <code>Cᵢ=(Pᵢ+Kᵢ) mod 26</code>, <code>Pᵢ=(Cᵢ−Kᵢ) mod 26</code>.</li>
+        </ol>
+
+        <div class="fw-semibold mb-2">Пример (классический)</div>
+        <pre class="result-box small">Текст: ATTACKATDAWN
+Ключ:  LEMONLEMONLE
+P:  A  T  T  A  C  K  A  T  D  A  W  N
+   0 19 19  0  2 10  0 19  3  0 22 13
+K:  L  E  M  O  N  L  E  M  O  N  L  E
+   11  4 12 14 13 11  4 12 14 13 11  4
+C=(P+K) mod 26:
+    11 23 31→5 14 15 21  4  1 17 13 18 17
+→   L  X  F  O  P  V  E  F  R  N  H  R
+Итог: LXFOPVEFRNHR
+</pre>
+
+        <div class="fw-semibold mt-3 mb-2">Особенности и безопасность</div>
+        <ul class="text-soft">
+          <li>При коротком ключе заметна периодичность → атака Касиски/Фридмана.</li>
+          <li>Современной криптографии не соответствует; годится как учебный пример.</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-gradient" href="{{ url_for('main.pg_vigenere') }}"><i class="bi bi-box-arrow-up-right me-1"></i>Открыть песочницу</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AES-CBC -->
+<div class="modal fade" id="infoAES" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content modal-glass">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-cpu me-2"></i>Как работает AES в режиме CBC</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <ol class="mb-3">
+          <li><b>AES-блок:</b> шифр с блоком 16 байт и ключом 16/24/32 байта (AES-128/192/256).</li>
+          <li><b>Паддинг PKCS#7:</b> дополняем сообщение до кратности 16 (каждый добавленный байт хранит количество добавленных байт).</li>
+          <li><b>IV:</b> случайный 16-байтовый вектор инициализации. Обязательно новый для каждого сообщения.</li>
+          <li><b>CBC:</b> для каждого блока <code>Pᵢ</code>: <code>Cᵢ = AESₖ(Pᵢ ⊕ Cᵢ₋₁)</code>, где <code>C₀ = IV</code>. Расшифр.: <code>Pᵢ = AESₖ⁻¹(Cᵢ) ⊕ Cᵢ₋₁</code>.</li>
+          <li><b>Вывод:</b> обычно передаём <code>IV‖C</code> в Base64.</li>
+        </ol>
+
+        <div class="fw-semibold mb-2">Мини-пример</div>
+        <pre class="result-box small">Текст: "HELLO"
+Ключ:  16 байт (напр. "YELLOW SUBMARINE")
+IV:    16 случайных байт (каждый запуск новый!)
+PKCS#7: "HELLO" + 11×0x0B → 16 байт
+
+Блок 1: X = (HELLO+pad) ⊕ IV
+        C1 = AES_k(X)
+Вывод:  Base64( IV || C1 )
+</pre>
+
+        <div class="fw-semibold mt-3 mb-2">Важные примечания</div>
+        <ul class="text-soft">
+          <li><b>Нельзя</b> использовать один и тот же IV с тем же ключом для разных сообщений.</li>
+          <li>CBC обеспечивает конфиденциальность, но <b>не даёт целостность</b> — нужен MAC (например, HMAC) или используйте AEAD (GCM).</li>
+          <li>Ошибки одного блока затрагивают расшифровку этого и следующего блока (эффект распространения).</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-gradient" href="{{ url_for('main.pg_aes') }}"><i class="bi bi-box-arrow-up-right me-1"></i>Открыть песочницу</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RSA-OAEP -->
+<div class="modal fade" id="infoRSA" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content modal-glass">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-shield-check me-2"></i>Как работает RSA (OAEP)</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <ol class="mb-3">
+          <li><b>Ключи:</b> выбираются большие простые <code>p,q</code>, <code>n=pq</code>, <code>φ=(p−q)</code по Эйлеру, выбираем <code>e</code>, находим <code>d=e⁻¹ mod φ(n)</code>. Открытый ключ <code>(n,e)</code>, закрытый — <code>d</code>.</li>
+          <li><b>Зачем OAEP:</b> «обёртка» на основе хэш-функции (обычно SHA-256) делает RSA вероятностным и безопасным для «чистого» текста.</li>
+          <li><b>OAEP-идея:</b> сообщение дополняется, смешивается с случайным <i>seed</i> через <code>MGF1</code>, образуются два маскированных блока, которые и подаются в RSA.</li>
+          <li><b>Шифрование:</b> <code>c = m^e mod n</code>, где <code>m</code> — OAEP-кодированный блок.</li>
+          <li><b>Расшифрование:</b> <code>m = c^d mod n</code> → снимаем OAEP-маски → получаем исходный текст.</li>
+        </ol>
+
+        <div class="fw-semibold mb-2">Практическое</div>
+        <ul class="text-soft">
+          <li>Максимальная длина сообщения ограничена размером ключа и накладными OAEP (для 2048-битного ключа ≈ 190–214 байт текста).</li>
+          <li>Для длинных данных используют гибрид: случайный ключ для AES шифрует данные, а этот ключ — RSA-OAEP.</li>
+          <li>Не путать с устаревшим PKCS#1 v1.5-padding.</li>
+        </ul>
+
+        <div class="fw-semibold mt-3 mb-2">Игрушечный пример (без OAEP, маленькие числа)</div>
+        <pre class="result-box small">p=61, q=53 → n=3233, φ(n)=3120
+e=17 → d=2753 (обратный по mod 3120)
+m=65 → c = 65^17 mod 3233 = 2790
+Расшифр.: 2790^2753 mod 3233 = 65
+</pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-gradient" href="{{ url_for('main.pg_rsa') }}"><i class="bi bi-box-arrow-up-right me-1"></i>Открыть песочницу</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RC4 -->
+<div class="modal fade" id="infoRC4" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content modal-glass">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-lightning-charge me-2"></i>Как работает RC4</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <ol class="mb-3">
+          <li><b>KSA (Key Scheduling Algorithm):</b> по ключу создаём перестановку массива <code>S[0..255]</code>.</li>
+          <li><b>PRGA (Pseudo-Random Generation Algorithm):</b> из <code>S</code> генерируем поток байтов-ключа <i>keystream</i>.</li>
+          <li><b>Шифрование/дешифрование:</b> <code>C = P ⊕ keystream</code>, операция симметрична.</li>
+        </ol>
+
+        <div class="fw-semibold mb-2">Мини-пример</div>
+        <pre class="result-box small">Текст: "hello"
+Ключ:  "secret"
+Шифр:  Base64( P ⊕ keystream )   ← поток зависит от ключа
+Дешифр.: (Base64⁻¹(Шифр)) ⊕ тот же keystream = "hello"
+</pre>
+
+        <div class="fw-semibold mt-3 mb-2">Важно о безопасности</div>
+        <ul class="text-soft">
+          <li>Есть известные смещения в начале потока → часто «отрезают» первые 256/1024 байт (RC4-dropN).</li>
+          <li>RC4 считается небезопасным для современных протоколов (в TLS 1.3 исключён).</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-gradient" href="{{ url_for('main.pg_rc4') }}"><i class="bi bi-box-arrow-up-right me-1"></i>Открыть песочницу</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Playfair -->
+<div class="modal fade" id="infoPlayfair" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content modal-glass">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-grid-3x3-gap me-2"></i>Как работает Playfair</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <ol class="mb-3">
+          <li><b>Квадрат 5×5:</b> строим по ключевому слову, объединяя <code>I/J</code> (алфавит без J).</li>
+          <li><b>Разбиение текста:</b> на пары (диграммы). Повтор в паре → вставляем <code>X</code>, нечётную длину дополняем <code>X</code>.</li>
+          <li><b>Правила для пары (A,B):</b>
+            <ul>
+              <li>Одна строка → заменить на правых соседей.</li>
+              <li>Один столбец → заменить на нижних соседей.</li>
+              <li>Иначе → взять буквы на пересечениях «прямоугольника».</li>
+            </ul>
+          </li>
+        </ol>
+
+        <div class="fw-semibold mb-2">Пример</div>
+        <pre class="result-box small">Ключ: MONARCHY → таблица 5×5 (I/J вместе)
+Текст: "HELLO" → разбиваем: HE | LX | LO  (повтор L разделён X)
+Шифруем каждую диграмму по правилам → получаем шифртекст (зависит от квадрата)
+</pre>
+
+        <div class="fw-semibold mt-3 mb-2">Замечания</div>
+        <ul class="text-soft">
+          <li>Playfair — исторический шифр, удобен для обучения, но не стойкий.</li>
+          <li>Пробелы и знаки обычно убирают перед шифрованием (оставляя только буквы).</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-gradient" href="{{ url_for('main.pg_playfair') }}"><i class="bi bi-box-arrow-up-right me-1"></i>Открыть песочницу</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SHA-256 -->
+<div class="modal fade" id="infoSHA256" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content modal-glass">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-hash me-2"></i>Как работает SHA-256</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <ol class="mb-3">
+          <li><b>Паддинг:</b> к сообщению добавляется 1-бит, нули и 64-битная длина так, чтобы итог был кратен 512 бит.</li>
+          <li><b>Разбиение:</b> на 512-битные блоки. Внутри блока строится расписание слов <code>W₀…W₆₃</code>.</li>
+          <li><b>Компрессия:</b> 64 шага с функциями <code>Σ₀, Σ₁, Ch, Maj</code> и константами <code>K₀…K₆₃</code>, обновляющими 8 регистров.</li>
+          <li><b>Выход:</b> конкатенация 8 регистров → 256-битный хэш (в hex 64 символа).</li>
+        </ol>
+
+        <div class="fw-semibold mb-2">Пример</div>
+        <pre class="result-box small">"abc" →
+ba7816bf8f01cfea414140de5dae2223
+b00361a396177a9cb410ff61f20015ad
+</pre>
+
+        <div class="fw-semibold mt-3 mb-2">Свойства</div>
+        <ul class="text-soft">
+          <li>Фиксированная длина (256 бит), необратимость, стойкость к коллизиям (на практике).</li>
+          <li>Хэш ≠ шифрование: восстановить исходный текст из хэша нельзя.</li>
+          <li>Для контроля целостности данных и проверки ответов в лабах (сравнение SHA-256).</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-gradient" href="{{ url_for('main.pg_sha256') }}"><i class="bi bi-box-arrow-up-right me-1"></i>Открыть песочницу</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Rail Fence -->
+<div class="modal fade" id="infoRailFence" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content modal-glass">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-diagram-3 me-2"></i>Как работает Rail Fence (забор)</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <ol class="mb-3">
+          <li><b>Идея:</b> записываем символы по диагонали «зигзагом» через <code>N</code> рельс.</li>
+          <li><b>Шифрование:</b> читаем получившиеся строки сверху вниз и склеиваем.</li>
+          <li><b>Дешифрование:</b> восстанавливаем зигзаг по шаблону прохода и раскладываем символы на свои позиции.</li>
+        </ol>
+
+        <div class="fw-semibold mb-2">Пример (N=3)</div>
+        <pre class="result-box small">WEAREDISCOVEREDFLEEATONCE
+W   E   C   R   L   T   E
+ E R D S O E E F E A O C
+  A   I   V   D   E   N
+→ WECRLTEERDSOEEFEAOCAIVDEN
+</pre>
+
+        <div class="fw-semibold mt-3 mb-2">Примечания</div>
+        <ul class="text-soft">
+          <li>Чистая перестановка (транспозиция), без подстановки символов.</li>
+          <li>Криптоустойчивость низкая, хорош как учебная иллюстрация.</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-gradient" href="{{ url_for('main.pg_railfence') }}"><i class="bi bi-box-arrow-up-right me-1"></i>Открыть песочницу</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 {% endblock %}
