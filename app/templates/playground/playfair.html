@@ -1,19 +1,92 @@
 {% extends 'base.html' %}
 {% block title %}Playfair{% endblock %}
+
 {% block content %}
 <h2 class="mb-3 text-gradient">Playfair</h2>
-<form method="post">
+
+<!-- Подсказка -->
+<div class="alert alert-info small">
+  <b>Поддержка алфавитов:</b> рус/лат автоматически. Для латиницы используется сетка 5×5 ( <code>j→i</code> ).
+  Для кириллицы — 8×4 (буква <code>ё</code> нормализуется в <code>е</code>). Небуквенные символы игнорируются.
+</div>
+
+<form method="post" novalidate>
   {{ form.hidden_tag() }}
-  <div class="mb-3">{{ form.text.label(class="form-label") }} {{ form.text(class="form-control", rows="6") }}</div>
-  <div class="mb-3">{{ form.key.label(class="form-label") }} {{ form.key(class="form-control") }}</div>
+
+  <div class="mb-3">
+    {{ form.text.label(class="form-label") }}
+    {{ form.text(class="form-control", rows="6", maxlength="5000", placeholder="Введите исходный текст") }}
+    <div class="form-text d-flex justify-content-between">
+      <span>Допустимо до 5000 символов.</span>
+      <span id="textCounter">0/5000</span>
+    </div>
+    {% for e in form.text.errors %}
+      <div class="text-danger small mt-1">{{ e }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="mb-3">
+    {{ form.key.label(class="form-label") }}
+    {{ form.key(class="form-control", maxlength="64", placeholder="Ключевое слово (до 64 символов)") }}
+    <div class="form-text d-flex justify-content-between">
+      <span>Ключ нормализуется под выбранный алфавит.</span>
+      <span id="keyCounter">0/64</span>
+    </div>
+    {% for e in form.key.errors %}
+      <div class="text-danger small mt-1">{{ e }}</div>
+    {% endfor %}
+  </div>
+
   {{ form.submit(class="btn btn-gradient") }}
 </form>
 
+{% if err %}
+  <div class="alert alert-danger mt-3">{{ err }}</div>
+{% endif %}
+
 {% if enc %}
   <hr class="my-4">
-  <h5>Шифртекст</h5>
-  <pre class="result-box">{{ enc }}</pre>
-  <h5 class="mt-3">Дешифрование (проверка)</h5>
-  <pre class="result-box">{{ dec }}</pre>
+
+  <h5 class="mb-2">Шифртекст</h5>
+  <div class="position-relative mb-3">
+    <button class="btn btn-soft btn-sm copy-btn" type="button" data-target="#pfEnc">
+      <i class="bi bi-clipboard"></i> Копировать
+    </button>
+    <pre id="pfEnc" class="result-box">{{ enc }}</pre>
+  </div>
+
+  <h5 class="mb-2">Дешифрование (проверка)</h5>
+  <div class="position-relative">
+    <button class="btn btn-soft btn-sm copy-btn" type="button" data-target="#pfDec">
+      <i class="bi bi-clipboard"></i> Копировать
+    </button>
+    <pre id="pfDec" class="result-box">{{ dec }}</pre>
+  </div>
 {% endif %}
+
+<script>
+  // счётчики длины
+  (function () {
+    const t = document.querySelector('[name="{{ form.text.name }}"]');
+    const k = document.querySelector('[name="{{ form.key.name }}"]');
+    const tc = document.getElementById('textCounter');
+    const kc = document.getElementById('keyCounter');
+    if (t && tc) { const upd = () => tc.textContent = `${t.value.length}/5000`; t.addEventListener('input', upd); upd(); }
+    if (k && kc) { const upd2 = () => kc.textContent = `${k.value.length}/64`;   k.addEventListener('input', upd2); upd2(); }
+
+    // копирование
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const el = document.querySelector(btn.dataset.target);
+        if (!el) return;
+        try {
+          await navigator.clipboard.writeText(el.innerText);
+          const old = btn.innerHTML;
+          btn.innerHTML = '<i class="bi bi-clipboard-check"></i> Скопировано';
+          setTimeout(() => btn.innerHTML = old, 1300);
+        } catch (_) {}
+      });
+    });
+  })();
+</script>
 {% endblock %}

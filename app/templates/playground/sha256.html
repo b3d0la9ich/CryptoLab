@@ -1,27 +1,68 @@
 {% extends 'base.html' %}
 {% block title %}SHA-256{% endblock %}
 {% block content %}
+
 <h2 class="mb-3 text-gradient">SHA-256</h2>
-<form method="post">
+
+<div class="alert alert-info small">
+  <b>Важно:</b> SHA-256 — это <u>хэш</u>. Обратного преобразования не существует. Вход кодируется как UTF-8.
+</div>
+
+<form method="post" novalidate>
   {{ form.hidden_tag() }}
-  <div class="mb-3">{{ form.text.label(class="form-label") }} {{ form.text(class="form-control", rows="6") }}</div>
+
+  <div class="mb-3">
+    {{ form.text.label(class="form-label") }}
+    {{ form.text(class="form-control", rows="6", maxlength="10000", id="shaText") }}
+    {% for e in form.text.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+    <div class="form-text"><span id="shaCnt">0</span>/10000</div>
+  </div>
+
   {{ form.submit(class="btn btn-gradient") }}
 </form>
 
 {% if digest %}
   <hr class="my-4">
-  <h5>Хэш (hex)</h5>
-  <div class="position-relative">
+
+  <h5 class="mb-2">Хэш (hex)</h5>
+  <div class="position-relative mb-3">
     <button class="btn btn-soft btn-sm copy-btn" data-target="#sha256Hex">
       <i class="bi bi-clipboard"></i> Копировать
     </button>
     <pre id="sha256Hex" class="result-box">{{ digest }}</pre>
   </div>
+
+  {% if digest_b64 %}
+  <h5 class="mb-2">Хэш (Base64)</h5>
+  <div class="position-relative mb-3">
+    <button class="btn btn-soft btn-sm copy-btn" data-target="#sha256B64">
+      <i class="bi bi-clipboard"></i> Копировать
+    </button>
+    <pre id="sha256B64" class="result-box">{{ digest_b64 }}</pre>
+  </div>
+  {% endif %}
+
   <script>
-    document.querySelectorAll('.copy-btn').forEach(b=>b.onclick=async()=>{
-      const t=document.querySelector(b.dataset.target).innerText;
-      try{await navigator.clipboard.writeText(t);const o=b.innerHTML;b.innerHTML='Скопировано';setTimeout(()=>b.innerHTML=o,1200);}catch(e){}
-    });
+    document.querySelectorAll('.copy-btn').forEach(b => b.addEventListener('click', async () => {
+      const target = document.querySelector(b.dataset.target);
+      if (!target) return;
+      try {
+        await navigator.clipboard.writeText(target.innerText);
+        const old = b.innerHTML;
+        b.innerHTML = '<i class="bi bi-clipboard-check"></i> Скопировано';
+        setTimeout(()=> b.innerHTML = old, 1200);
+      } catch(e) {}
+    }));
   </script>
 {% endif %}
+
+<script>
+  const st = document.getElementById('shaText');
+  const sc = document.getElementById('shaCnt');
+  if (st && sc) {
+    const upd = ()=> sc.textContent = st.value.length;
+    st.addEventListener('input', upd); upd();
+  }
+</script>
+
 {% endblock %}

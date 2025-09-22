@@ -467,3 +467,25 @@ h1,h2,h3,h4 {
 .card-users h5 {
   text-shadow: 0 0 1px rgba(0,0,0,.4);
 }
+
+/* Текст в карточках на тёмном фоне */
+.card.glass,
+.modal-glass {
+  color: #e8ebf1; /* светлее основной */
+}
+
+.text-soft { color: #a9b3c7; }
+
+.list-group-item.bg-transparent {
+  color: #e8ebf1;
+}
+.list-group-item.bg-transparent .badge {
+  font-weight: 600;
+}
+
+/* result/pre-box контрастнее */
+pre.p-3.bg-light.border.rounded {
+  background: #0f1623 !important;
+  color: #e8ebf1 !important;
+  border-color: rgba(255,255,255,.1) !important;
+}

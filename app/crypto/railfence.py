@@ -1,4 +1,5 @@
 def railfence_encrypt(text: str, rails: int) -> str:
+    if rails < 2: return text
     rows = [''] * rails
     r, step = 0, 1
     for ch in text:
@@ -9,27 +10,26 @@ def railfence_encrypt(text: str, rails: int) -> str:
     return ''.join(rows)
 
 def railfence_decrypt(cipher: str, rails: int) -> str:
-    # восстановим траекторию
-    n = len(cipher)
-    pattern = [0]*n
+    if rails < 2: return cipher
+    # вычисляем длины строк
+    pattern = []
     r, step = 0, 1
-    for i in range(n):
-        pattern[i] = r
+    for _ in cipher:
+        pattern.append(r)
         if r == 0: step = 1
         elif r == rails-1: step = -1
         r += step
-    # посчитаем длины для каждой рельсы
-    counts = [pattern.count(j) for j in range(rails)]
-    idx = [0]*rails
-    start = 0
-    rails_str = []
+    counts = [pattern.count(i) for i in range(rails)]
+    # нарезаем
+    idx = 0
+    rows = []
     for c in counts:
-        rails_str.append(cipher[start:start+c])
-        start += c
-    # собираем по узору
-    out = []
-    for i in range(n):
-        r = pattern[i]
-        out.append(rails_str[r][idx[r]])
-        idx[r] += 1
-    return ''.join(out)
+        rows.append(list(cipher[idx:idx+c]))
+        idx += c
+    # восстановление
+    res = []
+    pos = [0]*rails
+    for row in pattern:
+        res.append(rows[row][pos[row]])
+        pos[row] += 1
+    return ''.join(res)

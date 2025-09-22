@@ -1,6 +1,11 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, IntegerField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, NumberRange
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, IntegerField, RadioField
+from wtforms.validators import DataRequired, Email, Length, EqualTo, NumberRange, Optional
+
+
+MAX_TEXT = 5000
 
 
 # Мягкий email-валидатор: позволяет любые домены (в т.ч. .local),
@@ -10,6 +15,13 @@ def any_domain_email(form, field):
     if "@" not in v or v.startswith("@") or v.endswith("@"):
         raise ValidationError("Неверный email")
     # можно добавить ещё чуть-чуть правил, но без проверки DNS/TLD
+
+class ModeMixin:
+    mode = RadioField(
+        'Режим',
+        choices=[('enc', 'Зашифровать'), ('dec', 'Расшифровать')],
+        default='enc'
+    )
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), any_domain_email])
@@ -23,43 +35,46 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Зарегистрироваться')
 
 # Песочницы
-class CaesarForm(FlaskForm):
-    text = TextAreaField('Текст', validators=[DataRequired()])
+class CaesarForm(FlaskForm, ModeMixin):
+    text = TextAreaField('Текст', validators=[DataRequired(), Length(max=5000)])
     shift = IntegerField('Сдвиг', default=3, validators=[DataRequired(), NumberRange(min=-100, max=100)])
     submit = SubmitField('Выполнить')
 
-class VigenereForm(FlaskForm):
-    text = TextAreaField('Текст', validators=[DataRequired()])
+class VigenereForm(FlaskForm, ModeMixin):
+    text = TextAreaField('Текст', validators=[DataRequired(), Length(max=5000)])
     key = StringField('Ключ', validators=[DataRequired(), Length(min=1, max=64)])
     submit = SubmitField('Выполнить')
 
-class AESForm(FlaskForm):
-    text = TextAreaField('Текст', validators=[DataRequired()])
-    key = StringField('Ключ (16/24/32 байта)', validators=[DataRequired(), Length(min=16, max=32)])
-    submit = SubmitField('Зашифровать (CBC)')
+class PlayfairForm(FlaskForm, ModeMixin):
+    text = TextAreaField('Текст', validators=[DataRequired(), Length(max=5000)])
+    key = StringField('Ключевое слово', validators=[DataRequired(), Length(min=1, max=64)])
+    submit = SubmitField('Выполнить')
 
-class RSAForm(FlaskForm):
-    text = TextAreaField('Текст', validators=[DataRequired()])
-    submit = SubmitField('Зашифровать/Расшифровать с новым ключом')
-
-class RC4Form(FlaskForm):
-    text = TextAreaField('Текст', validators=[DataRequired()])
+class RC4Form(FlaskForm, ModeMixin):
+    text = TextAreaField('Текст / Base64(шифртекст)', validators=[DataRequired(), Length(max=10000)])
     key = StringField('Ключ', validators=[DataRequired(), Length(min=1, max=256)])
     submit = SubmitField('Выполнить')
 
-class PlayfairForm(FlaskForm):
-    text = TextAreaField('Текст', validators=[DataRequired()])
-    key = StringField('Ключевое слово', validators=[DataRequired(), Length(min=1, max=32)])
+class RailFenceForm(FlaskForm, ModeMixin):
+    text = TextAreaField('Текст', validators=[DataRequired(), Length(max=5000)])
+    rails = IntegerField('Число рельс (2–10)', default=3, validators=[DataRequired(), NumberRange(min=2, max=10)])
     submit = SubmitField('Выполнить')
 
-class RailFenceForm(FlaskForm):
-    text = TextAreaField('Текст', validators=[DataRequired()])
-    rails = IntegerField('Число рельс (2–10)', default=3,
-                         validators=[DataRequired(), NumberRange(min=2, max=10)])
+# AES — два поля для шифрования/дешифрования
+class AESForm(FlaskForm):
+    mode = RadioField('Режим', choices=[('enc', 'Зашифровать'), ('dec', 'Расшифровать')], default='enc')
+    text = TextAreaField('Открытый текст', validators=[Optional(), Length(max=10000)])
+    ctb64 = TextAreaField('Base64 (IV+CT)', validators=[Optional(), Length(max=20000)])
+    key = StringField('Ключ (16/24/32 байта)', validators=[DataRequired(), Length(min=16, max=32)])
+    submit = SubmitField('Выполнить (CBC)')
+
+class RSAForm(FlaskForm):
+    mode = RadioField('Режим', choices=[('enc', 'Зашифровать'), ('dec', 'Расшифровать')], default='enc')
+    text = TextAreaField('Текст / Base64(шифртекст)', validators=[DataRequired(), Length(max=10000)])
     submit = SubmitField('Выполнить')
 
 class SHA256Form(FlaskForm):
-    text = TextAreaField('Текст', validators=[DataRequired()])
+    text = TextAreaField('Текст', validators=[DataRequired(), Length(max=10000)])
     submit = SubmitField('Посчитать хэш')
 
 

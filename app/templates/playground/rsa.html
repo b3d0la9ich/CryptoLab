@@ -4,12 +4,25 @@
 
 <h2 class="mb-3 text-gradient">RSA (OAEP)</h2>
 
-<form method="post">
+<div class="alert alert-info small">
+  <div class="fw-semibold mb-1"><i class="bi bi-info-circle me-1"></i>Памятка</div>
+  <ul class="mb-0">
+    <li>Текст шифруется как <code>UTF-8</code>.</li>
+    <li>Схема: <b>RSA-2048 + OAEP(SHA-256)</b>.</li>
+    <li>Ограничение длины сообщения для OAEP-2048 ≈ <b>190 байт</b> (символов в UTF-8 может быть меньше/больше).</li>
+  </ul>
+</div>
+
+<form method="post" novalidate>
   {{ form.hidden_tag() }}
+
   <div class="mb-3">
     {{ form.text.label(class="form-label") }}
-    {{ form.text(class="form-control", rows="6") }}
+    {{ form.text(class="form-control", rows="6", maxlength="190", id="rsaText") }}
+    {% for e in form.text.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+    <div class="form-text"><span id="rsaCnt">0</span>/190</div>
   </div>
+
   {{ form.submit(class="btn btn-gradient") }}
 </form>
 
@@ -25,14 +38,55 @@
   </div>
 
   <h5 class="mb-2">Дешифрование (проверка)</h5>
-  <div class="position-relative">
+  <div class="position-relative mb-4">
     <button class="btn btn-soft btn-sm copy-btn" data-target="#rsaDec">
       <i class="bi bi-clipboard"></i> Копировать
     </button>
     <pre id="rsaDec" class="result-box">{{ dec }}</pre>
   </div>
 
+  {% if pub_pem or priv_pem %}
+    <div class="card glass p-3">
+      <h5 class="mb-3"><i class="bi bi-key me-2"></i>Сгенерированные ключи (PEM)</h5>
+
+      {% if pub_pem %}
+      <div class="mb-3">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <div class="fw-semibold">Публичный ключ</div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-soft btn-sm copy-btn" data-target="#rsaPubPem">
+              <i class="bi bi-clipboard"></i>
+            </button>
+            <button class="btn btn-soft btn-sm dl" data-name="rsa_public.pem" data-target="#rsaPubPem">
+              <i class="bi bi-download"></i>
+            </button>
+          </div>
+        </div>
+        <pre id="rsaPubPem" class="result-box mb-0">{{ pub_pem }}</pre>
+      </div>
+      {% endif %}
+
+      {% if priv_pem %}
+      <div class="mb-2">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <div class="fw-semibold">Закрытый ключ</div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-soft btn-sm copy-btn" data-target="#rsaPrivPem">
+              <i class="bi bi-clipboard"></i>
+            </button>
+            <button class="btn btn-soft btn-sm dl" data-name="rsa_private.pem" data-target="#rsaPrivPem">
+              <i class="bi bi-download"></i>
+            </button>
+          </div>
+        </div>
+        <pre id="rsaPrivPem" class="result-box mb-0">{{ priv_pem }}</pre>
+      </div>
+      {% endif %}
+    </div>
+  {% endif %}
+
   <script>
+    // копирование
     document.querySelectorAll('.copy-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
         const el = document.querySelector(btn.dataset.target);
@@ -40,13 +94,37 @@
         try {
           await navigator.clipboard.writeText(el.innerText);
           const old = btn.innerHTML;
-          btn.innerHTML = '<i class="bi bi-clipboard-check"></i> Скопировано';
-          setTimeout(()=> btn.innerHTML = old, 1400);
+          btn.innerHTML = '<i class="bi bi-clipboard-check"></i>';
+          setTimeout(()=> btn.innerHTML = old, 1200);
         } catch(e) {}
+      });
+    });
+
+    // скачивание PEM
+    document.querySelectorAll('.dl').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const el = document.querySelector(btn.dataset.target);
+        if (!el) return;
+        const blob = new Blob([el.innerText], {type: 'application/x-pem-file'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = btn.dataset.name || 'key.pem';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
       });
     });
   </script>
 {% endif %}
 
+<script>
+  // счётчик длины
+  const t = document.getElementById('rsaText');
+  const c = document.getElementById('rsaCnt');
+  if (t && c) {
+    const upd = ()=> c.textContent = t.value.length;
+    t.addEventListener('input', upd); upd();
+  }
+</script>
+
 {% endblock %}
- юююююююююююююююююююююююююююююююююююбб
