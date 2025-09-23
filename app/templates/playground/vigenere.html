@@ -4,47 +4,61 @@
 
 <h2 class="mb-3 text-gradient">Шифр Виженера</h2>
 
-<form method="post">
+<form method="post" novalidate>
   {{ form.hidden_tag() }}
+
+  <!-- Режим -->
+  <div class="mb-3">
+    <label class="form-label d-block">Режим</label>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="{{ form.mode.name }}" id="vigModeEnc" value="enc"
+             {% if form.mode.data=='enc' %}checked{% endif %}>
+      <label class="form-check-label" for="vigModeEnc">Зашифровать</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="{{ form.mode.name }}" id="vigModeDec" value="dec"
+             {% if form.mode.data=='dec' %}checked{% endif %}>
+      <label class="form-check-label" for="vigModeDec">Расшифровать</label>
+    </div>
+  </div>
+
+  <!-- Текст -->
   <div class="mb-3">
     {{ form.text.label(class="form-label") }}
-    {{ form.text(class="form-control", rows="6") }}
+    {{ form.text(class="form-control", rows="6", placeholder="Введите текст...") }}
+    {% for e in form.text.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
   </div>
+
+  <!-- Ключ -->
   <div class="mb-3">
     {{ form.key.label(class="form-label") }}
-    {{ form.key(class="form-control") }}
+    {{ form.key(class="form-control", placeholder="Ключ (рус/англ буквы)") }}
+    {% for e in form.key.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
   </div>
+
   {{ form.submit(class="btn btn-gradient") }}
 </form>
 
-{% if enc %}
+{% if result %}
   <hr class="my-4">
-  <h5 class="mb-2">Шифртекст</h5>
+  <h5 class="mb-2">Результат</h5>
   <div class="position-relative mb-3">
-    <button class="btn btn-soft btn-sm copy-btn" data-target="#vigEnc">
+    <button class="btn btn-soft btn-sm copy-btn" data-target="#vigResult">
       <i class="bi bi-clipboard"></i> Копировать
     </button>
-    <pre id="vigEnc" class="result-box">{{ enc }}</pre>
-  </div>
-
-  <h5 class="mb-2">Расшифровка (проверка)</h5>
-  <div class="position-relative">
-    <button class="btn btn-soft btn-sm copy-btn" data-target="#vigDec">
-      <i class="bi bi-clipboard"></i> Копировать
-    </button>
-    <pre id="vigDec" class="result-box">{{ dec }}</pre>
+    <pre id="vigResult" class="result-box">{{ result }}</pre>
   </div>
 
   <script>
     document.querySelectorAll('.copy-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
-        const target = document.querySelector(btn.dataset.target);
-        if (!target) return;
+        const el = document.querySelector(btn.dataset.target);
+        if (!el) return;
         try {
-          await navigator.clipboard.writeText(target.innerText);
+          await navigator.clipboard.writeText(el.innerText);
           const old = btn.innerHTML;
           btn.innerHTML = '<i class="bi bi-clipboard-check"></i> Скопировано';
-          setTimeout(()=> btn.innerHTML = old, 1400);
+          setTimeout(()=> btn.innerHTML = old, 1200);
         } catch(e) {}
       });
     });

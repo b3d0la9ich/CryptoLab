@@ -1,30 +1,27 @@
-from flask import Blueprint, render_template, request, redirect, url_for, abort
+# app/views/main.py
+# -*- coding: utf-8 -*-
+
+from flask import Blueprint, render_template, request, flash
 from flask_login import login_required, current_user
 from hashlib import sha256
 
-from ..forms import CaesarForm, VigenereForm, AESForm, RSAForm
-from ..crypto.caesar import caesar
-from ..crypto.vigenere import vigenere
-from ..crypto.aes import encrypt_cbc, decrypt_cbc
-from ..crypto.rsa import encrypt_decrypt
+from .. import db
 from ..models import Lab, Submission
-from ..forms import CaesarForm, VigenereForm, AESForm, RSAForm, RC4Form, PlayfairForm, RailFenceForm, SHA256Form
-from ..crypto.rc4 import rc4_encrypt, rc4_decrypt
-from ..crypto.playfair import playfair_encrypt, playfair_decrypt
-from ..crypto.railfence import railfence_encrypt, railfence_decrypt
-from ..crypto.sha256util import sha256_hex
-import base64
-from flask import Blueprint, render_template, request
-from flask_login import login_required
-from ..forms import CaesarForm, VigenereForm, AESForm, RSAForm, PlayfairForm, RC4Form, RailFenceForm
+
+# Формы
+from ..forms import (
+    CaesarForm, VigenereForm, AESForm, RSAForm,
+    RC4Form, PlayfairForm, RailFenceForm, SHA256Form
+)
+
+# Крипто-утилиты
 from ..crypto.caesar import caesar_encrypt, caesar_decrypt
 from ..crypto.vigenere import vigenere
 from ..crypto.aes import encrypt_cbc, decrypt_cbc
-from ..crypto.rsa import encrypt_decrypt, rsa_encrypt_b64, rsa_decrypt_b64
-from ..crypto.playfair import playfair_encrypt, playfair_decrypt
+from ..crypto.rsa import generate_keypair_pem, rsa_encrypt_b64, rsa_decrypt_b64
 from ..crypto.rc4 import rc4_encrypt_b64, rc4_decrypt_b64
+from ..crypto.playfair import playfair_encrypt, playfair_decrypt
 from ..crypto.railfence import railfence_encrypt, railfence_decrypt
-from .. import db
 
 bp = Blueprint('main', __name__)
 
@@ -41,101 +38,128 @@ def profile():
             .all())
     return render_template('profile.html', subs=subs)
 
-# Песочницы
-@bp.route('/playground/caesar', methods=['GET','POST'])
+# ===== Песочницы =====
+
+@bp.route('/playground/caesar', methods=['GET', 'POST'])
 @login_required
 def pg_caesar():
     form = CaesarForm()
-    out = None
+    result = None
     if form.validate_on_submit():
         txt = form.text.data
-        k = form.shift.data
-        out = caesar_encrypt(txt, k) if form.mode.data=='enc' else caesar_decrypt(txt, k)
-    return render_template('playground/caesar.html', form=form, result=out)
+        shift = form.shift.data
+        if getattr(form, 'mode', None) and form.mode.data == 'enc':
+            result = caesar_encrypt(txt, shift)
+        else:
+            # по умолчанию — расшифровка, если mode нет
+            result = caesar_decrypt(txt, shift)
+    return render_template('playground/caesar.html', form=form, result=result)
 
-@bp.route('/playground/vigenere', methods=['GET','POST'])
+@bp.route('/playground/vigenere', methods=['GET', 'POST'])
 @login_required
 def pg_vigenere():
     form = VigenereForm()
-    out = None
+    result = None
     if form.validate_on_submit():
-        txt, key = form.text.data, form.key.data
-        out = vigenere(txt, key, encrypt=(form.mode.data=='enc'))
-    return render_template('playground/vigenere.html', form=form, result=out)
+        txt = form.text.data
+        key = form.key.data
+        if form.mode.data == 'enc':
+            result = vigenere(txt, key, encrypt=True)
+        else:
+            result = vigenere(txt, key, encrypt=False)
+    return render_template('playground/vigenere.html', form=form, result=result)
 
-@bp.route('/playground/aes', methods=['GET','POST'])
+@bp.route('/playground/aes', methods=['GET', 'POST'])
 @login_required
 def pg_aes():
     form = AESForm()
     enc = dec = err = None
     if form.validate_on_submit():
-        key = form.key.data.encode('utf-8')
         try:
-            if form.mode.data=='enc':
+            key = form.key.data.encode('utf-8')
+            if getattr(form, 'mode', None) and form.mode.data == 'enc':
                 enc = encrypt_cbc(form.text.data, key)
-                dec = decrypt_cbc(enc, key)
+                dec = decrypt_cbc(enc, key)  # проверка
             else:
-                dec = decrypt_cbc(form.ctb64.data, key)
-                enc = form.ctb64.data
+                # расшифровка из Base64 (IV||CT)
+                ctb64 = getattr(form, 'ctb64', None)
+                if ctb64 is None or not ctb64.data:
+                    raise ValueError('Не указан шифртекст Base64.')
+                dec = decrypt_cbc(ctb64.data, key)
+                enc = ctb64.data
         except Exception as e:
             err = f'Ошибка AES: {e}'
     return render_template('playground/aes.html', form=form, enc=enc, dec=dec, err=err)
 
-@bp.route('/playground/rsa', methods=['GET','POST'])
+@bp.route('/playground/rsa', methods=['GET', 'POST'])
 @login_required
 def pg_rsa():
     form = RSAForm()
-    enc = dec = priv = pub = err = None
+    enc = dec = pub_pem = priv_pem = None
     if form.validate_on_submit():
+        text = (form.text.data or '').strip()
         try:
-            if form.mode.data=='enc':
-                enc, dec, pub, priv = rsa_encrypt_b64(form.text.data)  # вернём всё
-            else:
-                dec = rsa_decrypt_b64(form.text.data)  # ожидаем Base64 шифртекст, используем сгенерённый ключ в сессии
+            priv_pem, pub_pem = generate_keypair_pem(bits=2048)
+            enc = rsa_encrypt_b64(text, pub_pem)
+            dec = rsa_decrypt_b64(enc, priv_pem)
         except Exception as e:
-            err = f'RSA: {e}'
-    return render_template('playground/rsa.html', form=form, enc=enc, dec=dec, pub=pub, priv=priv, err=err)
+            flash(f'Ошибка RSA: {e}', 'danger')
+    return render_template('playground/rsa.html',
+                           form=form, enc=enc, dec=dec,
+                           pub_pem=pub_pem, priv_pem=priv_pem)
 
-
-@bp.route('/playground/rc4', methods=['GET','POST'])
+@bp.route('/playground/rc4', methods=['GET', 'POST'])
 @login_required
 def pg_rc4():
     form = RC4Form()
-    enc = dec = None
+    enc = dec = err = None
     if form.validate_on_submit():
-        if form.mode.data=='enc':
-            enc = rc4_encrypt_b64(form.text.data, form.key.data)
-            dec = rc4_decrypt_b64(enc, form.key.data)
-        else:
-            dec = rc4_decrypt_b64(form.text.data, form.key.data)
-            enc = form.text.data
-    return render_template('playground/rc4.html', form=form, enc=enc, dec=dec)
+        try:
+            txt = form.text.data
+            key = form.key.data
+            if getattr(form, 'mode', None) and form.mode.data == 'enc':
+                enc = rc4_encrypt_b64(txt, key)
+                dec = rc4_decrypt_b64(enc, key)  # проверка
+            else:
+                # расшифровка из Base64
+                dec = rc4_decrypt_b64(txt, key)
+                enc = txt
+        except Exception as e:
+            err = f'Ошибка RC4: {e}'
+    return render_template('playground/rc4.html', form=form, enc=enc, dec=dec, err=err)
 
-@bp.route('/playground/playfair', methods=['GET','POST'])
+@bp.route('/playground/playfair', methods=['GET', 'POST'])
 @login_required
 def pg_playfair():
     form = PlayfairForm()
     enc = dec = err = None
     if form.validate_on_submit():
         try:
-            if form.mode.data == 'enc':
-                enc = playfair_encrypt(form.text.data, form.key.data)
-                dec = playfair_decrypt(enc, form.key.data)
+            txt = form.text.data
+            key = form.key.data
+            if getattr(form, 'mode', None) and form.mode.data == 'enc':
+                enc = playfair_encrypt(txt, key)
+                dec = playfair_decrypt(enc, key)  # проверка
             else:
-                dec = playfair_decrypt(form.text.data, form.key.data)
-                enc = form.text.data
+                dec = playfair_decrypt(txt, key)
+                enc = txt
         except Exception as e:
-            err = f'Ошибка: {e}'
+            err = f'Ошибка Playfair: {e}'
     return render_template('playground/playfair.html', form=form, enc=enc, dec=dec, err=err)
 
-@bp.route('/playground/railfence', methods=['GET','POST'])
+@bp.route('/playground/railfence', methods=['GET', 'POST'])
 @login_required
 def pg_railfence():
     form = RailFenceForm()
-    res = None
+    result = None
     if form.validate_on_submit():
-        res = railfence_encrypt(form.text.data, form.rails.data) if form.mode.data=='enc' else railfence_decrypt(form.text.data, form.rails.data)
-    return render_template('playground/railfence.html', form=form, result=res)
+        txt = form.text.data
+        rails = form.rails.data
+        if getattr(form, 'mode', None) and form.mode.data == 'enc':
+            result = railfence_encrypt(txt, rails)
+        else:
+            result = railfence_decrypt(txt, rails)
+    return render_template('playground/railfence.html', form=form, result=result)
 
 @bp.route('/playground/sha256', methods=['GET', 'POST'])
 @login_required
@@ -147,7 +171,8 @@ def pg_sha256():
         digest = hashlib.sha256(form.text.data.encode('utf-8')).hexdigest()
     return render_template('playground/sha256.html', form=form, digest=digest)
 
-# Лабы для студентов
+# ===== Лабы =====
+
 @bp.route('/labs')
 @login_required
 def labs_list():
@@ -163,7 +188,9 @@ def solve_lab(lab_id):
     if 'answer' in request.form:
         answer = request.form['answer']
         ok = (sha256(answer.encode()).hexdigest().lower() == lab.answer_hash.lower())
-        db.session.add(Submission(user_id=current_user.id, lab_id=lab.id,
-                                  submitted_text=answer, is_correct=ok))
+        db.session.add(Submission(user_id=current_user.id,
+                                  lab_id=lab.id,
+                                  submitted_text=answer,
+                                  is_correct=ok))
         db.session.commit()
     return render_template('playground/lab_solve.html', lab=lab, ok=ok, answer=answer)

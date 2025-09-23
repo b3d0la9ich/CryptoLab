@@ -1,35 +1,52 @@
+# app/crypto/railfence.py
+# -*- coding: utf-8 -*-
+
 def railfence_encrypt(text: str, rails: int) -> str:
-    if rails < 2: return text
-    rows = [''] * rails
+    """Классический «забор» без фильтрации символов: пробелы/пунктуация/цифры
+    остаются и участвуют в зигзаге. Переводы строк тоже учитываются.
+    """
+    if rails < 2 or len(text) <= 1:
+        return text
+
+    rows = [[] for _ in range(rails)]
     r, step = 0, 1
     for ch in text:
-        rows[r] += ch
-        if r == 0: step = 1
-        elif r == rails-1: step = -1
+        rows[r].append(ch)
         r += step
-    return ''.join(rows)
+        if r == rails - 1 or r == 0:
+            step *= -1
+    return ''.join(''.join(row) for row in rows)
+
 
 def railfence_decrypt(cipher: str, rails: int) -> str:
-    if rails < 2: return cipher
-    # вычисляем длины строк
-    pattern = []
+    """Обратное преобразование к encrypt выше (также без какой-либо фильтрации)."""
+    n = len(cipher)
+    if rails < 2 or n <= 1:
+        return cipher
+
+    # 1) Считаем, сколько символов придётся на каждую «рельсу»
+    counts = [0] * rails
     r, step = 0, 1
-    for _ in cipher:
-        pattern.append(r)
-        if r == 0: step = 1
-        elif r == rails-1: step = -1
+    for _ in range(n):
+        counts[r] += 1
         r += step
-    counts = [pattern.count(i) for i in range(rails)]
-    # нарезаем
-    idx = 0
-    rows = []
+        if r == rails - 1 or r == 0:
+            step *= -1
+
+    # 2) Нарезаем шифртекст на куски по рельсам
+    rails_data = []
+    i = 0
     for c in counts:
-        rows.append(list(cipher[idx:idx+c]))
-        idx += c
-    # восстановление
-    res = []
-    pos = [0]*rails
-    for row in pattern:
-        res.append(rows[row][pos[row]])
-        pos[row] += 1
-    return ''.join(res)
+        rails_data.append(list(cipher[i:i + c]))
+        i += c
+
+    # 3) Снова идём по зигзагу и собираем исходную строку
+    out = []
+    r, step = 0, 1
+    for _ in range(n):
+        out.append(rails_data[r].pop(0))
+        r += step
+        if r == rails - 1 or r == 0:
+            step *= -1
+
+    return ''.join(out)

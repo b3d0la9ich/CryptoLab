@@ -1,8 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField, IntegerField
-from wtforms.validators import DataRequired, Email, Length, EqualTo, NumberRange
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, IntegerField, RadioField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, NumberRange, Optional
+from wtforms.validators import ValidationError
 
 
 MAX_TEXT = 5000
@@ -69,9 +68,16 @@ class AESForm(FlaskForm):
     submit = SubmitField('Выполнить (CBC)')
 
 class RSAForm(FlaskForm):
-    mode = RadioField('Режим', choices=[('enc', 'Зашифровать'), ('dec', 'Расшифровать')], default='enc')
-    text = TextAreaField('Текст / Base64(шифртекст)', validators=[DataRequired(), Length(max=10000)])
+    text = TextAreaField('Текст / Base64(шифртекст)', validators=[DataRequired()])
+
     submit = SubmitField('Выполнить')
+
+    # Ограничение по байтам UTF-8 (≈ 190 для RSA-2048+OAEP(SHA-256))
+    def validate_text(self, field):
+        # Если мы шифруем — проверим лимит байтов. При расшифровке можно быть длиннее,
+        # но здесь у нас режим только шифрования/демо, см. view ниже.
+        if len(field.data.encode('utf-8')) > 190:
+            raise ValidationError('Для RSA-2048 + OAEP(SHA-256) размер сообщения не должен превышать ~190 байт (в UTF-8 меньше 190 символов).')
 
 class SHA256Form(FlaskForm):
     text = TextAreaField('Текст', validators=[DataRequired(), Length(max=10000)])

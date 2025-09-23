@@ -1,69 +1,77 @@
+# app/crypto/vigenere.py
 # -*- coding: utf-8 -*-
-# Поддержка RU/EN, сохранение регистра, небуквенные символы не трогаем.
-# Совместимость: есть и vigenere_encrypt/vigenere_decrypt, и vigenere(text, key, encrypt=True)
 
-RU = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
-EN = "abcdefghijklmnopqrstuvwxyz"
+from typing import Tuple
 
-def _alphabets_for(ch: str):
-    lo = ch.lower()
-    if lo in RU:
-        return RU, RU.upper()
-    if lo in EN:
-        return EN, EN.upper()
-    return None, None
+# Алфавиты (включая ё/Ё)
+RU_LOW = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
+RU_UP  = RU_LOW.upper()
+EN_LOW = "abcdefghijklmnopqrstuvwxyz"
+EN_UP  = EN_LOW.upper()
 
-def _kseq(text: str, key: str):
-    # последовательность сдвигов по буквам ключа (небуквы ключа игнорируем)
-    kletters = [c for c in key if c.isalpha()]
-    if not kletters:
-        return [0] * len(text)
-    res, j = [], 0
-    for c in text:
-        lo, up = _alphabets_for(c)
-        if lo:
-            kch = kletters[j % len(kletters)]
-            klo, kup = _alphabets_for(kch)
-            if not klo:
-                res.append(0)   # ключ из другого алфавита → мягко даём 0-сдвиг
-            else:
-                res.append(klo.index(kch.lower()))
-            j += 1
-        else:
-            res.append(0)
-    return res
+def _alpha_sets(ch: str) -> Tuple[str, str] | None:
+    """Возвращает (нижний, верхний) алфавит под символ (RU/EN), иначе None."""
+    if ch in RU_LOW or ch in RU_UP:
+        return RU_LOW, RU_UP
+    if ch in EN_LOW or ch in EN_UP:
+        return EN_LOW, EN_UP
+    return None
 
-def vigenere_encrypt(text: str, key: str) -> str:
-    ks = _kseq(text, key)
-    out = []
-    for c, k in zip(text, ks):
-        lo, up = _alphabets_for(c)
-        if not lo:
-            out.append(c); continue
-        if c.isupper():
-            i = up.index(c)
-            out.append(up[(i + k) % len(up)])
-        else:
-            i = lo.index(c)
-            out.append(lo[(i + k) % len(lo)])
-    return "".join(out)
+def _shift_for_key_char(kch: str, alpha_low: str, alpha_up: str) -> int:
+    """Сдвиг по символу ключа в алфавите соответствующего языка/регистра."""
+    if kch in alpha_low:
+        return alpha_low.index(kch)
+    if kch in alpha_up:
+        return alpha_up.index(kch)
+    # если буква ключа другого языка — пробуем по её собственному алфавиту
+    sets = _alpha_sets(kch)
+    if sets:
+        low, up = sets
+        if kch in low: return low.index(kch)
+        if kch in up:  return up.index(kch)
+    # не буква — сдвиг 0
+    return 0
 
-def vigenere_decrypt(text: str, key: str) -> str:
-    ks = _kseq(text, key)
-    out = []
-    for c, k in zip(text, ks):
-        lo, up = _alphabets_for(c)
-        if not lo:
-            out.append(c); continue
-        if c.isupper():
-            i = up.index(c)
-            out.append(up[(i - k) % len(up)])
-        else:
-            i = lo.index(c)
-            out.append(lo[(i - k) % len(lo)])
-    return "".join(out)
-
-# ---- Совместимость со старым кодом ----
 def vigenere(text: str, key: str, encrypt: bool = True) -> str:
-    """Старое имя. encrypt=True → шифр, False → дешифр."""
-    return vigenere_encrypt(text, key) if encrypt else vigenere_decrypt(text, key)
+    """
+    Виженер для RU/EN (с ё/Ё), сохраняет регистр.
+    Небуквенные символы не изменяются И не двигают позицию по ключу.
+    """
+    if not key:
+        return text
+
+    out = []
+    k = [c for c in key if _alpha_sets(c)]  # берём из ключа только буквы RU/EN
+    if not k:
+        return text
+
+    ki = 0  # индекс по ключу
+    for ch in text:
+        sets = _alpha_sets(ch)
+        if not sets:
+            # цифры/пробелы/пунктуация — как есть, ключ не продвигаем
+            out.append(ch)
+            continue
+
+        alpha_low, alpha_up = sets
+        # текущий сдвиг по букве ключа
+        kch = k[ki % len(k)]
+        shift = _shift_for_key_char(kch, alpha_low, alpha_up)
+
+        if ch in alpha_low:
+            idx = alpha_low.index(ch)
+            if encrypt:
+                out.append(alpha_low[(idx + shift) % len(alpha_low)])
+            else:
+                out.append(alpha_low[(idx - shift) % len(alpha_low)])
+            ki += 1
+        elif ch in alpha_up:
+            idx = alpha_up.index(ch)
+            if encrypt:
+                out.append(alpha_up[(idx + shift) % len(alpha_up)])
+            else:
+                out.append(alpha_up[(idx - shift) % len(alpha_up)])
+            ki += 1
+        else:
+            out.append(ch)  # на всякий
+    return ''.join(out)
